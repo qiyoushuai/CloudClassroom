@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>我开设的课程</title>
+    <script src="../../../static/layui/layui.js"></script>
+    <link rel="stylesheet" href="../../../static/layui/css/layui.css">
+    <style>
+        .layui-side-scroll::-webkit-scrollbar {
+            /*滚动条整体样式*/
+            width : 5px;  /*高宽分别对应横竖滚动条的尺寸*/
+            height: 1px;
+        }
+        .layui-side-scroll::-webkit-scrollbar-thumb {
+            /*滚动条里面小方块*/
+            border-radius: 10px;
+            box-shadow   : inset 0 0 5px rgba(0, 0, 0, 0.2);
+            background   : #cbcbcb;
+        }
+        .layui-side-scroll::-webkit-scrollbar-track {
+            /*滚动条里面轨道*/
+            box-shadow   : inset 0 0 5px rgba(0, 0, 0, 0.2);
+            border-radius: 10px;
+            background   : #ededed;
+        }
+
+
+        .class_title{
+            font-weight: 300;
+            font-size: 20px !important;
+
+            font-family: fantasy;
+            position: relative;
+            left: 15px;
+            top: 10px;
+
+
+            display: block;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        width:170px;
+        }
+        .class_date{
+            position: relative;
+            left: 15px;
+        }
+        ul.layui-nav.layui-nav-tree a {
+            color: #666;
+        }
+        ul.layui-nav.layui-nav-tree p {
+            color: #666;
+        }
+        ul.layui-nav.layui-nav-tree{
+            height: 100%;
+            background: #eee;
+        }
+        .layui-nav-tree .layui-this>a, .layui-nav-tree .layui-this>a:hover {
+            background-color: #eee !important;
+            color: #666 !important;
+
+        }
+        .layui-nav-tree .layui-nav-item a:hover {
+            background-color: #eee;
+        }
+        .layui-nav .layui-nav-item a:hover, .layui-nav .layui-this a {
+            color: #666;
+        }
+        .layui-nav-tree .layui-nav-bar {
+            width: 5px;
+           /* height: 100px !important;
+            background-color: #5FB878;*/
+            background-color: white;
+            height: 0px !important;
+        }
+        .layui-side-scroll{
+            width: 200px;
+        }
+        .myClass{
+           width: 100%;
+            height: 100px;
+            cursor: pointer;
+            background: white;
+        }
+        .myClass_none{
+            width: 100%;
+            height: 100px !important;
+            background: white;
+            cursor:pointer;
+        }
+        div{
+            -moz-user-select:none;/*火狐*/
+            -webkit-user-select:none;/*webkit浏览器*/
+            -ms-user-select:none;/*IE10*/
+            -khtml-user-select:none;/*早期浏览器*/
+            user-select:none;
+        }
+        hr{
+            margin-block-start: 0em !important;
+            margin-block-end: 0em !important;
+        }
+            .none{
+                height: 60px;
+                width: 60px;
+                position: relative;
+                left: 72px;
+                top: 18px;
+            }
+
+
+
+            .content{
+                width: 1119.2px;
+                height: 550px;
+                position: relative;
+                left: 200px;
+            }
+        .iframe{
+            width: 100%;
+            height: 546px;
+            border-style: none;
+            border-left-style: outset;
+        }
+
+
+        .myClass_none:hover{
+            background-color: white !important;
+        }
+    </style>
+</head>
+<body>
+<div class="layui-side layui-side-child">
+    <div class="layui-side-scroll side_refresh">
+        <ul class="layui-nav layui-nav-tree" lay-filter="demo">
+        <!--    <li class="layui-nav-item">
+               <div class="myClass">
+                   <table style="height: 100%;width: 100%">
+                       <tr>
+                           <td colspan="4">
+                               <p class="class_title">
+                                   SpringBoot初级
+                               </p>
+                              <input class="hide" style="display: none" type="text" value="1001">
+                           </td>
+
+                       </tr>
+                       <tr>
+                           <td colspan="3">
+                               <p class="class_date">2020-3-17</p>
+                           </td>
+                            <td width="20%">
+                               <p>
+                                 &lt;!&ndash;  <span class="layui-badge-dot"></span>
+                                   <span class="layui-badge-dot layui-bg-orange"></span>&ndash;&gt;
+                                   <i class="layui-inline"  style="position: relative;top: 2px;}">
+                                       <span class="layui-badge-dot layui-bg-green" style="width: 10px;height: 10px"></span>
+                                   </i>
+                                   <i class="layui-inline" style="position: relative;right: 33px;}">
+                                         开课
+                                   </i>
+
+                               </p>
+                           </td>
+                       </tr>
+                   </table>
+               </div>
+            </li>-->
+                @for(curr in session.myCurriculums){
+                <li class="layui-nav-item">
+                    <div class="myClass">
+                        <table style="height: 100%;width: 100%">
+                            <tr>
+                                <td colspan="4">
+                                    <p class="class_title" title="${curr.c_name}">
+                                        ${curr.c_name}
+                                    </p>
+                                    <input class="hide" style="display: none" type="text" value="${curr.id}">
+                                    <input class="hide_state" style="display: none" type="text" value="${curr.state}">
+                                </td>
+
+                            </tr>
+                            <tr>
+                                <td colspan="3">
+                                    <p class="class_date">${curr.add_date}</p>
+                                </td>
+                                <td width="30%">
+                                    <p>
+                                        @if(curr.state == 1){
+                                        <i class="layui-inline"  style="position: relative;top: 2px;left: 20px;}">
+                                            <span class="layui-badge-dot layui-bg-orange" style="width: 10px;height: 10px"></span>
+                                        </i>
+                                        <i class="layui-inline" style="position: relative;right: 33px;}">
+                                            通过
+                                        </i>
+                                        @}else if(curr.state == 4){
+                                        <i class="layui-inline"  style="position: relative;top: 2px;left: 20px;}">
+                                            <span class="layui-badge-dot layui-bg-green" style="width: 10px;height: 10px"></span>
+                                        </i>
+                                        <i class="layui-inline" style="position: relative;right: 33px;}">
+                                            开课
+                                        </i>
+                                        @}else{
+                                        <i class="layui-inline"  style="position: relative;top: 2px;left: 20px;}">
+                                            <span class="layui-badge-dot" style="width: 10px;height: 10px"></span>
+                                        </i>
+                                        <i class="layui-inline" style="position: relative;right: 33px;}">
+                                            停课
+                                        </i>
+                                        @}
+                                        <!--  <span class="layui-badge-dot"></span>
+                                          <span class="layui-badge-dot layui-bg-orange"></span>-->
+
+
+                                    </p>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                </li>
+                <hr>
+                @}elsefor{
+                    <li class="layui-nav-item curr_none">
+                        <div class="myClass_none">
+                            <img class="none" src="../../../static/img/申请开课.png">
+                        </div>
+                    </li>
+                @}
+
+
+
+        </ul>
+    </div>
+</div>
+<div class="content">
+    <div class="mainbox">
+        <iframe class="iframe" src="/page/curriculum_notice" ></iframe>
+    </div>
+
+</div>
+
+<script>
+    var $;
+    function refresh(){
+        $(".side_refresh").load(location.href+" .side_refresh");
+    }
+    layui.use(['element','layer'], function(){
+        var element = layui.element,
+            layer = layui.layer;
+        $ = layui.jquery; //导航的hover效果、二级菜单等功能，需要依赖element模块
+
+
+        $(".layui-side").on("mouseover",".myClass",function () {
+            $(this).css("background-color","#f2f2f2");
+        });
+        $(".layui-side").on("mouseout",".myClass",function () {
+            $(this).css("background-color","white");
+        });
+
+    $(".layui-side").on("click",".myClass",function () {
+            var id = $(this).find('.hide').val();
+            var state = $(this).find('.hide_state').val();
+            if(state == 2){
+                parent.layer.alert("您的课程正在审核中，请耐心等待",{closeBtn:6,icon:2})
+            }else if(state == 3){
+                parent.layer.alert("此课程没有通过审核，请整理资料后重新提交",{closeBtn:5,icon:2})
+            }else{
+                $.ajax({
+                    type: "post",
+                    url: '/page/class_chapter',
+                    success: function(html) {
+                        $('.iframe').prop("src","/page/curriculum_info?curr_id="+id);
+                    }
+                });
+
+            }
+
+        });
+
+
+
+        //监听导航点击
+        element.on('nav(demo)', function(elem){
+            //console.log(elem)
+            layer.msg(elem.text());
+        });
+
+
+        $(".curr_none").next("span").css("background-color","white");
+        $(".myClass_none").click(function () {
+            parent.layui.$("#apply_class",parent.document).trigger("click");
+        });
+
+    });
+</script>
+</body>
+</html>

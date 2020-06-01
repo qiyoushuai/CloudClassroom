@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>教师审核页面</title>
+    <script src="../static/layui/layui.js"></script>
+    <link rel="stylesheet" href="../static/layui/css/layui.css">
+    <style>
+        .tool1{
+            position: relative;
+            left: 161px;
+        }
+        .select {
+            position: absolute;
+            left: -101px;
+            top: -15.5px;
+        }
+        .query_btn{
+            position: relative;
+            left: 110px;
+        }
+        .tool1 input {
+            width: 100px !important;
+            height: 30px !important;
+        }
+        .tool .layui-input{
+            position: absolute !important;
+            left: 20px !important;
+            width: 160px !important;
+            height: 30px !important;
+        }
+        .layui-btn-sm{
+            position: absolute !important;
+            left: 175px !important;
+            top: -14px !important;
+            height: 27px !important;
+            line-height: 27px !important;
+        }
+        .refresh{
+            position: absolute !important;
+            right: 115px !important;
+            top:12px !important;
+        }
+    </style>
+</head>
+<body>
+<div style="position: absolute;width:100%;">
+    <table id="application_list" lay-filter="application_list"></table>
+</div>
+
+<script type="text/html" id="stateTpl">
+    {{#  if(d.state === 1){ }}
+    <span class="layui-badge layui-bg-blue">待审核</span>
+    {{#  } else if(d.state === 2){ }}
+    <span class="layui-badge layui-bg-green">通&emsp;过</span>
+
+    {{# } else if(d.state === 3){ }}
+    <span class="layui-badge">未通过</span>
+    {{# } }}
+</script>
+
+
+<script>
+
+    layui.use('table', function(){
+        var table = layui.table
+            ,layer = layui.layer
+            ,$ = layui.jquery;
+
+
+        //第一个实例
+        table.render({
+            id: 'application_list'
+            ,elem: '#application_list'
+            ,height: 500
+            ,url: '/teac/getApplicationList' //数据接口
+            ,page: true //开启分页
+            ,toolbar: '#toolbarDemo' //开启头部工具栏，并为其绑定左侧模板
+            ,limit:9
+            ,limits:[9,18,27,36]
+            ,cols: [[ //表头
+                {field: 'id', title: '编号', width:155, sort: true, fixed: 'left'}
+                ,{field: 'user_id', title: '用户ID', width:235}
+                ,{field: 'position', title: '主修专业', width:401}
+                ,{field: 'state', title: '状态', sort: true,width:164,templet: '#stateTpl'}
+                ,{field: 'apply_date', title: '申请日期', sort: true,width: 283}
+                ,{title:'操作', toolbar: '#barDemo', width:90}
+            ]]
+
+        });
+
+
+        //头工具栏事件
+        table.on('toolbar(application_list)', function(obj){
+            switch(obj.event){
+                case 'apply_query':
+                    var data =$("#query_text").val();
+                    var state =$("[name=state]").val();
+                    //执行重载
+                    table.reload('application_list', {
+                        url: '/teac/query_apply'
+                        ,limit:9
+                        ,limits:[9,18,27,36]
+                        ,page: {
+                            curr: 1 //重新从第 1 页开始
+                        }
+                        ,where: {
+
+                            data: data,
+                            state:state
+
+                        }
+                    }, 'data');
+                    break;
+                case 'refresh':
+                    //执行重载
+                    table.reload('application_list', {
+                        url: '/teac/getApplicationList'
+                        ,limit:9
+                        ,limits:[9,18,27,36]
+                        ,page: {
+                            curr: 1 //重新从第 1 页开始
+                        }
+                    }, 'data');
+                    break;
+            }
+        });
+
+//监听工具条
+        table.on('tool(application_list)', function(obj){ //注：tool 是工具条事件名，test 是 table 原始容器的属性 lay-filter="对应的值"
+            var data = obj.data; //获得当前行数据
+            var layEvent = obj.event; //获得 lay-event 对应的值（也可以是表头的 event 参数对应的值）
+            var tr = obj.tr; //获得当前行 tr 的 DOM 对象（如果有的话）
+            if(layEvent === 'detail'){ //查看
+                //自定页
+                parent.layer.open({
+                    title: false,
+                    type: 2,
+                    skin: 'layui-layer-demo', //样式类名
+                    area: ['900px', '650px'],
+                    closeBtn: 0, //不显示关闭按钮
+                    fixed: true,
+                    move: false,
+                    anim: 2,
+                    shadeClose: true, //开启遮罩关闭
+                    content: '/page/teaApplication_info?id='+data.id,
+                });
+            }
+        });
+
+
+    });
+</script>
+
+<script type="text/html" id="barDemo">
+    <a class="layui-btn layui-btn-xs layui-btn-primary" lay-event="detail">查看详情</a>
+</script>
+
+<script type="text/html" id="toolbarDemo">
+    <!-- <div> <input type="text" class="layui-input"></div>-->
+    <div>
+        <div class="layui-inline refresh" lay-event="refresh">
+            <i class="layui-icon layui-icon-refresh"></i>
+        </div>
+        <div class="tool">
+            <input id="query_text" type="text" class="layui-input" placeholder="请输入要查询的内容" autocomplete="off">
+        </div>
+        <div class="layui-inline query_btn">
+            <button class="layui-btn layui-btn-sm" lay-event="apply_query">查询</button>
+        </div>
+
+        <div class="layui-inline tool1">
+            <div class="layui-input-block select">
+                <select name="state">
+                    <option value="">状态</option>
+                    <option value="1">待审核 </option>
+                    <option value="2">通过</option>
+                    <option value="3">未通过</option>
+                </select>
+            </div>
+        </div>
+    </div>
+</script>
+</body>
+</html>

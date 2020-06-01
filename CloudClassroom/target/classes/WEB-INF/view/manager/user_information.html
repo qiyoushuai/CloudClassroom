@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>用户信息</title>
+    <script src="../static/layui/layui.js"></script>
+    <link rel="stylesheet" href="../static/layui/css/layui.css">
+</head>
+<style>
+    .layui-table tbody tr:hover{
+        background-color: transparent;
+    }
+    .layui-input{
+        height: 30px !important;
+    }
+    .layui-btn-sm{
+        height: 25px !important;
+        line-height: 25px !important;
+    }
+    #cer_title{
+        font-size: 14px;
+        width: 100px;
+        position: relative;
+        left: 35px;
+        top: 5px;
+        color: #666666;
+    }
+    .tool{
+        position: absolute;
+        left: 100px;
+        top: 7.4px;
+    }
+</style>
+<body>
+<div style="width: 100%;height: 40px;background: #e6e6e6">
+    <div class="tool">
+        @if(user.state == 1){
+        <button name="lock" class="layui-btn layui-btn-sm layui-btn-danger user_lock">冻结此用户</button>
+        @}else if(user.state ==2){
+        <button name="unlock" class="layui-btn layui-btn-sm layui-btn-normal user_lock">解除冻结状态</button>
+        @}else{
+        <button class="layui-btn layui-btn-sm  layui-btn-disabled">账号状态异常</button>
+        @}
+    </div>
+</div>
+<div>
+    <form class="layui-form layui-form-pane" action="">
+        <table class="layui-table " lay-skin="nob" lay-size="sm">
+            <tr>
+                <td width="10%">
+                    <p align="right" style="font-size: 14px">用户ID</p>
+                </td>
+                <td  width="20%"><input type="text" name="saleid" disabled class="layui-input" value='${user.id}' disabled></td>
+                <td  width="10%">
+
+                    <p align="right"  style="font-size: 14px">账号</p>
+                </td>
+                <td width="20%">
+
+                    <input type="text" name="userid" autocomplete="off" value="${user.username}" class="layui-input" disabled>
+                </td>
+                <td  width="10%">
+
+                    <p align="right"  style="font-size: 14px">昵称</p>
+                </td>
+                <td width="20%">
+
+                    <input type="text" name="userid" autocomplete="off" value="${user.name}" class="layui-input" disabled>
+                </td>
+            </tr>
+            <tr>
+                <td  width="10%">
+
+                    <p align="right"  style="font-size: 14px">真实姓名</p>
+                </td>
+                <td width="20%">
+
+                    <input type="text" name="userid" autocomplete="off" value="${user.relname}" class="layui-input" disabled>
+                </td>
+                <td  width="10%">
+
+                    <p align="right"  style="font-size: 14px">性别</p>
+                </td>
+                <td width="20%">
+                    @if(user.sex == 3){
+                    <input type="text" name="userid" autocomplete="off" value="保密" class="layui-input" disabled>
+                    @}else if(user.sex ==1){
+                    <input type="text" name="userid" autocomplete="off" value="男" class="layui-input" disabled>
+                    @}else if(user.sex == 2){
+                    <input type="text" name="userid" autocomplete="off" value="女" class="layui-input" disabled>
+                    @}else{
+                    <input type="text" name="userid" autocomplete="off" value="/" class="layui-input" disabled>
+                    @}
+                </td>
+                <td  width="10%">
+
+                    <p align="right"  style="font-size: 14px">联系电话</p>
+                </td>
+                <td width="20%">
+
+                    <input type="text" name="userid" autocomplete="off" value="${user.phone}" class="layui-input" disabled>
+                </td>
+            </tr>
+            <tr>
+                <td  width="10%">
+
+                    <p align="right"  style="font-size: 14px">email</p>
+                </td>
+                <td width="20%">
+
+                    <input type="text" name="userid" autocomplete="off" value="${user.email}" class="layui-input" disabled>
+                </td>
+                <td  width="10%">
+
+                    <p align="right"  style="font-size: 14px">家庭住址</p>
+                </td>
+                <td colspan="3">
+
+                    <input type="text" name="userid" autocomplete="off" value="${user.address}" class="layui-input" disabled>
+                </td>
+            </tr>
+            <tr>
+                <td  width="10%">
+
+                    <p align="right"  style="font-size: 14px">注册日期</p>
+                </td>
+                <td width="20%">
+
+                    <input type="text" name="userid" autocomplete="off" value="${user.add_date}" class="layui-input" disabled>
+                </td>
+                <td  width="10%">
+
+                    <p align="right"  style="font-size: 14px">权限</p>
+                </td>
+                <td width="20%">
+                    @if(user.type == 1 ){
+                    <input type="text" name="userid" autocomplete="off" value="管理员" class="layui-input" disabled>
+                    @}else if(user.type == 2){
+                    <input type="text" name="userid" autocomplete="off" value="教师" class="layui-input" disabled>
+                    @}else if(user.type == 3){
+                    <input type="text" name="userid" autocomplete="off" value="学生" class="layui-input" disabled>
+                    @}else{
+                    <input type="text" name="userid" autocomplete="off" value="/" class="layui-input" disabled>
+                    @}
+                </td>
+                <td  width="10%">
+
+                    <p align="right"  style="font-size: 14px">账号状态</p>
+                </td>
+                <td width="20%">
+                    @if(user.state == 1 ){
+                    <input type="text" name="userid" autocomplete="off" value="可用" class="layui-input" disabled>
+                    @}else if(user.state == 2){
+                    <input type="text" name="userid" autocomplete="off" value="禁用" class="layui-input" disabled>
+                    @}else{
+                    <input type="text" name="userid" autocomplete="off" value="/" class="layui-input" disabled>
+                    @}
+                </td>
+            </tr>
+            <tr>
+                <td  width="10%">
+
+                    <p align="right"  style="font-size: 14px">人气值</p>
+                </td>
+                <td width="20%">
+
+                    <input type="text" name="userid" autocomplete="off" value="${user.popularity}" class="layui-input" disabled>
+                </td>
+                <td  width="10%">
+
+                </td>
+                <td width="20%">
+
+                </td>
+                <td  width="10%">
+
+                </td>
+                <td width="20%">
+
+                </td>
+            </tr>
+            <tr>
+                <td width="10%">
+                    <p align="right"  style="font-size: 14px">个人简介</p>
+                </td>
+                <td colspan="5">
+                    <textarea  class="layui-textarea" style="width: 400px;height: 100px" disabled>${user.profile}</textarea>
+                </td>
+            </tr>
+        </table>
+
+    </form>
+</div>
+<div style="width: 100%;height: 30px;background: #e6e6e6">
+    <p id="cer_title" >资格证书(教师)</p>
+</div>
+<div style="width: 96%;position: absolute;left: 2%">
+    <table id="certificate" lay-filter="certificate"></table>
+</div>
+<script>
+    layui.use(['form','layer','table'], function(){
+        var layer = layui.layer
+            ,table = layui.table
+            ,$ = layui.jquery;
+        $(".user_lock").click(function () {
+            var state = $(this).prop("name");
+            var type = null;
+            if(state == 'lock'){type = '冻结'}else if(state == 'unlock'){type = '解冻'}
+            layer.confirm("你确定"+type+"此用户吗",function (index) {
+
+                $.ajax({
+                    type: 'post',
+                    url: '/curr/lock_user',
+                    data:{
+                        state:state,
+                        id:"${user.id}"
+                    },
+                    success:function (data) {
+                        parent.parent.layer.msg(data);
+                        parent.frames["man_userList"].location.reload();
+                    },
+                    error:function (data) {
+                        parent.parent.layer.msg("服务器错误",{icon:2});
+
+                    }
+                });
+                layer.close(index);
+            });
+
+        });
+
+        table.render({
+            id: 'certificate'
+            ,elem: '#certificate'
+            ,height: 200
+            ,url: '/teac/getCertificate_url_user?id=${user.id}' //数据接口
+            ,page: true //开启分页
+            ,limit:3
+            ,limits:[3,6,9,12]
+            ,cols: [[ //表头
+                {field: 'id', title: '证书编号', width:155, sort: true, fixed: 'left',   style:'cursor: pointer;'}
+                ,{field: 'cer_name', title: '证书名',   style:'cursor: pointer;'}
+            ]]
+
+        });
+
+
+        //监听行单击事件（双击事件为：rowDouble）
+        table.on('row(certificate)', function(obj){
+            var data = obj.data;
+            //页面层-图片
+
+            parent.layer.open({
+                type: 1,
+                title: false,
+                shade:0.7,
+                closeBtn: 0,
+                area: ['auto'],
+                skin: 'layui-layer-nobg', //没有背景色
+                shadeClose: true,
+                content: '<img src="/resources/certificate/'+data.cer_url+'" style="width: 900px;height: 600px">',
+                success: function(layero, index){
+                    layero.click(function () {
+                        parent.layer.close(index);
+                    })
+                }
+            });
+            //标注选中样式
+            obj.tr.addClass('layui-table-click').siblings().removeClass('layui-table-click');
+        });
+    })
+</script>
+</body>
+</html>

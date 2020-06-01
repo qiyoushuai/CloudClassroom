@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sdjt.classroom.dao.WebMapper">
+
+    <!--如果要映射的表中有double类型的数据。一定要指明jdbcType 和javaType -->
+  <!--  <resultMap id="pcMap" type="Pc">
+        <id column="pcid" property="pcid"></id>
+        <result column="pcname" property="pcname"></result>
+        <result column="pcdate" property="pcdate" ></result>
+        <result column="userid" property="userid"></result>
+        <result column="saleid" property="saleid"></result>
+        <result column="supplierid" property="supplierid"></result>
+        <result column="auditstatus" property="auditstatus"></result>
+        <result column="pcprice" property="pcprice" jdbcType="DOUBLE" javaType="DOUBLE"></result>
+        <result column="reason" property="reason"></result>
+    </resultMap>-->
+ <insert id="addWebVisits" >
+     update web_visits set visits_today = visits_today+1 , visits_all = visits_all +1
+ </insert>
+
+    <!--
+    Integer selectUserCount();
+    Integer selectTeacCount();
+    WebVisits selectVisitsTodayCount();
+    List<WebVisitsRecord> getWebVisitsRecord();
+    -->
+    <select id="selectUserCount" resultType="java.lang.Integer">
+        select count(*) from user where state = 1
+    </select>
+
+    <select id="selectTeacCount" resultType="java.lang.Integer">
+        select count(*) from user where type = 2 and state = 1
+    </select>
+
+    <select id="selectCurrCount" resultType="java.lang.Integer">
+        select count(*) from curriculum where state = 4
+    </select>
+
+    <select id="selectVisitsTodayCount" resultType="com.sdjt.classroom.model.WebVisits">
+        select visits_today,visits_all from web_visits
+    </select>
+
+    <select id="getWebVisitsRecord" resultType="com.sdjt.classroom.model.WebVisitsRecord">
+        select * from(select visits,DATE_FORMAT(date,"%m-%d")date from web_visits_record order by date DESC  limit 7)web_visits_record ORDER BY date
+    </select>
+
+
+    <select id="getCarouselList" resultType="com.sdjt.classroom.model.Carousel">
+        select id,img_url,title,message,url from homepage_carousel
+    </select>
+
+    <insert id="addCarousel" parameterType="com.sdjt.classroom.model.Carousel">
+        insert into homepage_carousel (title,message,url,img_url) values (#{title},#{message},#{url},#{img_url})
+    </insert>
+
+    <delete id="delCarousel">
+        delete from homepage_carousel where id = #{id}
+    </delete>
+
+</mapper>

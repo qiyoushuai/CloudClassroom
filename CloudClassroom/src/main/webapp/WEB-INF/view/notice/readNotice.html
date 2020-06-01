@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>消息读取页面</title>
+    <script src="../../../static/layui/layui.js"></script>
+    <link rel="stylesheet" href="../../../static/layui/css/layui.css">
+    <style>
+        .resend{
+            position: absolute;
+            left: 580px;
+            top: 10px;
+        }
+    </style>
+</head>
+<body>
+<div id="notice">
+    <blockquote id="title" class="layui-elem-quote">${session.notice.title}</blockquote>
+    <button class="layui-btn layui-btn-sm layui-btn-primary resend">回复</button>
+    @if(session.notice.send_name != null && session.notice.send_name !=""){
+    <blockquote class="layui-elem-quote layui-quote-nm ">发件人：&ensp;${session.notice.send_name}(${session.notice.send_username})&ensp;
+        @if(session.notice.send_type == 1){
+       (管理员）
+        @}else if(session.notice.send_type ==2){
+        （教师）
+        @}else{
+       （用户）
+        @}
+    </blockquote>
+    @}else{
+    <blockquote class="layui-elem-quote layui-quote-nm">发件人：&ensp;${session.notice.send_username}&ensp;
+        @if(session.notice.send_type == 1){
+        (管理员）
+        @}else if(session.notice.send_type ==2){
+        （教师）
+        @}else{
+        （用户）
+        @}
+    </blockquote>
+    @}
+
+
+    <textarea style="height: 327px" name="desc" readonly="readonly" placeholder="请输入内容" id="message" class="layui-textarea" >${session.notice.message}</textarea>
+</div>
+<script type="text/javascript">
+    layui.use(['table','layer','element'], function(){
+        var table = layui.table,
+            layer=layui.layer,
+            $ = layui.jquery;
+        var send_user = "${session.notice.send_user}";
+        var send_username = "${session.notice.send_username}";
+        var send_name = "${session.notice.send_name}";
+        $(".resend").click(function () {
+            location.href="/page/resendNotice?send_user="+send_user+"&send_username="+send_username+"&send_name="+send_name;
+        });
+
+    });
+
+
+</script>
+
+</body>
+</html>

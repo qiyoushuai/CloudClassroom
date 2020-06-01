@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>课程申请记录查询</title>
+    <script src="../static/layui/layui.js"></script>
+    <link rel="stylesheet" href="../static/layui/css/layui.css">
+    <style>
+        .tool .layui-input{
+            position: absolute !important;
+            left: 20px !important;
+            width: 160px !important;
+            height: 30px !important;
+        }
+        .layui-btn-sm{
+            position: absolute !important;
+            left: 175px !important;
+            top: -14px !important;
+            height: 27px !important;
+            line-height: 27px !important;
+        }
+        .refresh{
+            position: absolute !important;
+            right: 115px !important;
+            top:12px !important;
+        }
+    </style>
+</head>
+<body>
+<div style="position: absolute;width:100%;">
+    <table id="userList" lay-filter="userList"></table>
+</div>
+
+
+<script type="text/html" id="stateTpl">
+    {{#  if(d.state === 2){ }}
+    <span class="layui-badge layui-bg-orange">审核中</span>
+    {{#  } else if(d.state === 3){ }}
+    <span class="layui-badge">未通过</span>
+    {{#  } else if(d.state === 6){ }}
+    <span class="layui-badge-rim ">被封停</span>
+    {{#  } else { }}
+    <span class="layui-badge layui-bg-green">通&emsp;过</span>
+    {{# } }}
+</script>
+
+<script>
+
+    layui.use('table', function(){
+        var table = layui.table
+            ,layer = layui.layer
+            ,$ = layui.jquery;
+
+
+        //第一个实例
+        table.render({
+            id: 'userList'
+            ,elem: '#userList'
+            ,height: 500
+            ,url: '/teac/getApplyClass_record' //数据接口
+            ,page: true //开启分页
+            ,toolbar: '#toolbarDemo' //开启头部工具栏，并为其绑定左侧模板
+            ,limit:9
+            ,limits:[9,18,27,36]
+            ,cols: [[ //表头
+                {field: 'id', title: '编号', width:155, sort: true, fixed: 'left'}
+                ,{field: 'c_name', title: '课程名称', width:813}
+                ,{field: 'add_date', title: '注册日期', sort: true,width: 280}
+                ,{field: 'state', title: '状态', sort: true,width: 83,templet: '#stateTpl'}
+            ]]
+
+        });
+
+
+        //头工具栏事件
+        table.on('toolbar(userList)', function(obj){
+            var checkStatus = table.checkStatus(obj.config.id);
+            switch(obj.event){
+                case 'user_query':
+                    var data =$("#query_text").val();
+                    //执行重载
+                    table.reload('userList', {
+                        url: '/teac/queryCurriculumRecord'
+                        ,limit:9
+                        ,limits:[9,18,27,36]
+                        ,page: {
+                            curr: 1 //重新从第 1 页开始
+                        }
+                        ,where: {
+
+                            text: data
+
+                        }
+                    }, 'data');
+                    break;
+                case 'refresh':
+                    //执行重载
+                    table.reload('userList', {
+                        url: '/teac/getApplyClass_record'
+                        ,limit:9
+                        ,limits:[9,18,27,36]
+                        ,page: {
+                            curr: 1 //重新从第 1 页开始
+                        }
+                    }, 'data');
+                    break;
+            }
+        });
+
+
+
+    });
+</script>
+
+<script type="text/html" id="barDemo">
+    <a class="layui-btn layui-btn-xs layui-btn-primary" lay-event="detail">查看详情</a>
+</script>
+
+<script type="text/html" id="toolbarDemo">
+    <!-- <div> <input type="text" class="layui-input"></div>-->
+    <div>
+        <div class="layui-inline refresh" lay-event="refresh">
+            <i class="layui-icon layui-icon-refresh"></i>
+        </div>
+        <div class="tool">
+            <input id="query_text" type="text" class="layui-input" placeholder="请输入要查询的内容" autocomplete="off">
+        </div>
+        <div class="layui-inline">
+            <button class="layui-btn layui-btn-sm" lay-event="user_query">查询</button>
+        </div>
+
+
+    </div>
+</script>
+</body>
+</html>

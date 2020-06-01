@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>用户信息</title>
+    <script src="../static/layui/layui.js"></script>
+    <link rel="stylesheet" href="../static/layui/css/layui.css">
+</head>
+<style>
+    tr {
+        height: 50px;
+        line-height: 50px;
+    }
+    .layui-table tbody tr:hover{
+        background-color: transparent;
+    }
+    .layui-input{
+        height: 30px !important;
+    }
+    .layui-btn-sm{
+        height: 25px !important;
+        line-height: 25px !important;
+    }
+    #cer_title{
+        font-size: 14px;
+        width: 180px;
+        position: relative;
+        left: 35px;
+        top: 5px;
+        color: #666666;
+    }
+    .tool{
+        position: absolute;
+        left: 100px;
+        top: 7.4px;
+    }
+</style>
+<body>
+<div style="width: 100%;height: 40px;background: #e6e6e6">
+    <div class="tool">
+        @if(application_info.state == 1){
+        <button name="get_pass" class="layui-btn layui-btn-sm  user_lock">通过审核</button>
+        <button name="not_pass" class="layui-btn layui-btn-sm layui-btn-danger user_lock">不通过审核</button>
+        @}else{
+        <button class="layui-btn layui-btn-sm  layui-btn-disabled">审核状态已完成</button>
+        @}
+    </div>
+</div>
+<div>
+    <form class="layui-form layui-form-pane" action="">
+        <table class="layui-table " lay-skin="nob" lay-size="sm">
+            <tr>
+                <td width="10%">
+                    <p align="right" style="font-size: 14px">申请编号</p>
+                </td>
+                <td  width="20%"><input type="text" name="saleid" disabled class="layui-input" value='${application_info.id}' disabled></td>
+                <td  width="10%">
+
+                    <p align="right"  style="font-size: 14px">申请人ID</p>
+                </td>
+                <td width="20%">
+
+                    <input type="text" name="userid" autocomplete="off" value="${application_info.user_id}" class="layui-input" disabled>
+                </td>
+                <td  width="10%">
+
+                    <p align="right"  style="font-size: 14px">真实姓名</p>
+                </td>
+                <td width="20%">
+
+                    <input type="text" name="userid" autocomplete="off" value="${application_info.relname}" class="layui-input" disabled>
+                </td>
+            </tr>
+            <tr>
+                <td  width="10%">
+
+                    <p align="right"  style="font-size: 14px">个人邮箱</p>
+                </td>
+                <td width="20%">
+
+                    <input type="text" name="userid" autocomplete="off" value="${application_info.email}" class="layui-input" disabled>
+                </td>
+                <td  width="10%">
+
+                    <p align="right"  style="font-size: 14px">联系电话</p>
+                </td>
+                <td width="20%">
+                    <input type="text" name="userid" autocomplete="off" value="${application_info.phone}" class="layui-input" disabled>
+                </td>
+                <td  width="10%">
+
+                    <p align="right"  style="font-size: 14px">联系电话</p>
+                </td>
+                <td width="20%">
+
+                    <input type="text" name="userid" autocomplete="off" value="${application_info.phone}" class="layui-input" disabled>
+                </td>
+            </tr>
+            <tr>
+                <td  width="10%">
+
+                    <p align="right"  style="font-size: 14px">身份证号码</p>
+                </td>
+                <td width="20%">
+
+                    <input type="text" name="userid" autocomplete="off" value="${application_info.idcard_no}" class="layui-input" disabled>
+                </td>
+                <td  width="10%">
+
+                    <p align="right"  style="font-size: 14px">家庭住址</p>
+                </td>
+                <td colspan="3">
+
+                    <input type="text" name="userid" autocomplete="off" value="${application_info.address}" class="layui-input" disabled>
+                </td>
+            </tr>
+            <tr>
+                <td  width="10%">
+
+                    <p align="right"  style="font-size: 14px">申请日期</p>
+                </td>
+                <td width="20%">
+
+                    <input type="text" name="userid" autocomplete="off" value="${application_info.apply_date}" class="layui-input" disabled>
+                </td>
+                <td  width="10%">
+
+                    <p align="right"  style="font-size: 14px">主修专业</p>
+                </td>
+                <td width="20%">
+                    <input type="text" name="userid" autocomplete="off" value="${application_info.position}" class="layui-input" disabled>
+                </td>
+                <td  width="10%">
+
+                    <p align="right"  style="font-size: 14px">申请状态</p>
+                </td>
+                <td width="20%">
+                    @if(application_info.state == 1 ){
+                    <input type="text" name="userid" autocomplete="off" value="待审核" class="layui-input" disabled>
+                    @}else if(application_info.state == 2){
+                    <input type="text" name="userid" autocomplete="off" value="通过" class="layui-input" disabled>
+                    @}else if(application_info.state == 3){
+                    <input type="text" name="userid" autocomplete="off" value="未通过" class="layui-input" disabled>
+                    @}else{
+                    <input type="text" name="userid" autocomplete="off" value="/" class="layui-input" disabled>
+                    @}
+                </td>
+            </tr>
+
+            <tr>
+                <td width="10%">
+                    <p align="right"  style="font-size: 14px">教学经历</p>
+                </td>
+                <td colspan="5">
+                    <textarea  class="layui-textarea" style="width: 400px;height: 100px" disabled>${application_info.TEACHING}</textarea>
+                </td>
+            </tr>
+        </table>
+
+    </form>
+</div>
+<div style="width: 100%;height: 30px;background: #e6e6e6">
+    <p id="cer_title" >资格证书及学历证书(教师)</p>
+</div>
+<div style="width: 96%;position: absolute;left: 2%">
+    <table id="certificate" lay-filter="certificate"></table>
+</div>
+<script>
+    layui.use(['form','layer','table'], function(){
+        var layer = layui.layer
+            ,table = layui.table
+            ,$ = layui.jquery;
+        $(".user_lock").click(function () {
+            var state = $(this).prop("name");
+            var type = null;
+            if(state == 'get_pass'){type = ''}else if(state == 'not_pass'){type = '不'}
+            layer.confirm("确定"+type+"通过此用户的教师资格审核吗",function (index) {
+
+                $.ajax({
+                    type: 'post',
+                    url: '/curr/approval_teaApply',
+                    data:{
+                        state:state,
+                        id:"${application_info.id}",
+                        user_id:"${application_info.user_id}",
+                        apply_date:"${application_info.apply_date}",
+                        certificate:"${application_info.certificate}"
+                    },
+                    success:function (data) {
+                        parent.parent.layer.msg(data);
+                        parent.frames["tea_approval"].location.reload();
+                    },
+                    error:function (data) {
+                        parent.parent.layer.msg("服务器错误",{icon:2});
+
+                    }
+                });
+                layer.close(index);
+            });
+
+        });
+
+        table.render({
+            id: 'certificate'
+            ,elem: '#certificate'
+            ,height: 200
+            ,url: '/teac/getCertificate_url?id=${application_info.id}' //数据接口
+            ,page: true //开启分页
+            ,limit:3
+            ,limits:[3,6,9,12]
+            ,cols: [[ //表头
+                {field: 'id', title: '证书编号', width:155, sort: true, fixed: 'left',   style:'cursor: pointer;'}
+                ,{field: 'cer_name', title: '证书名',   style:'cursor: pointer;'}
+            ]]
+
+        });
+
+
+        //监听行单击事件（双击事件为：rowDouble）
+        table.on('row(certificate)', function(obj){
+            var data = obj.data;
+            //页面层-图片
+
+            parent.layer.open({
+                type: 1,
+                title: false,
+                shade:0.7,
+                closeBtn: 0,
+                area: ['auto'],
+                skin: 'layui-layer-nobg', //没有背景色
+                shadeClose: true,
+                content: '<img src="/resources/certificate/'+data.cer_url+'" style="width: 900px;height: 600px">',
+                success: function(layero, index){
+                layero.click(function () {
+                    parent.layer.close(index);
+                })
+            }
+            });
+            //标注选中样式
+            obj.tr.addClass('layui-table-click').siblings().removeClass('layui-table-click');
+        });
+    })
+</script>
+</body>
+</html>

@@ -1,0 +1,26 @@
+spring:
+  datasource:      ###数据库四大参数，spring会根据四大参数创建数据源##
+    url: jdbc:mysql://127.0.0.1:3306/cloud_classroom
+    username: root
+    password: root
+    driver-class-name: com.mysql.jdbc.Driver
+  mvc:
+    static-path-pattern: /static/**   #静态资源路径
+    view:
+      prefix: /WEB-INF/view      #以前缀方式自定i文件路径
+  servlet:
+    multipart:
+      max-file-size: 666666666MB
+      max-request-size: 666666666MB
+
+
+#mybatis的相关配置，必须配置映射文件的位置
+mybatis:
+  mapper-locations: classpath:mapping/*.xml       #映射文件的路径
+  type-aliases-package: com.sdjt.classroom.model    #实体类所在包
+
+
+beetl:
+  suffix: html
+  delimiter-statement-start: \@     #开始界定
+  delimiter-statement-end: null      #结束界定符，以回车换行作为结束

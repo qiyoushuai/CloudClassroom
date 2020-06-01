@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>登录注册</title>
+    <script src="../static/layui/layui.js" type="text/javascript"></script>
+    <script src="../static/js/jquery.min.js"></script>
+    <script src="../static/js/jq-slideVerify.js" type="text/javascript" charset="utf-8"></script>
+    <link href="../static/layui/css/layui.css" rel="stylesheet">
+    <style>
+        .logadd_page{
+            position: relative;
+            top: 60px;
+        }
+        .layui-text em,.layui-word-aux{
+            padding: 0px 30px !important;
+        }
+        .layui-form-pane .layui-form-label{
+            width: 52px !important;
+        }
+        .layui-form-label{
+            left: 58px !important;
+        }
+    </style>
+</head>
+<body>
+
+<div id="log_page" class="logadd_page" >
+    <div style="width: 80%;position: absolute;left: 10%"><hr class="layui-bg-green" style="height: 5px"></div><br>
+    <div style="position: relative;top: 30px">
+    <form class="layui-form layui-form-pane" action="#" lay-filter="userLogin">
+        <div class="layui-form-item" style="width: 95%;position: relative;left: -5%">
+            <label class="layui-form-label" >
+                <i class="layui-icon layui-icon-username" style="font-size: 20px"></i>
+            </label>
+            <div class="layui-input-block">
+                <input type="text" name="username" required  lay-verify="required" placeholder="请输入账号" autocomplete="on" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item" style="width: 95%;position:relative;left: -5%">
+            <label class="layui-form-label">
+                <i class="layui-icon layui-icon-password" style="font-size: 20px"></i>
+            </label>
+            <div class="layui-input-block">
+                <input type="password" name="password" required lay-verify="required" placeholder="请输入密码" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <div class="" style="width: 80%;position:absolute;left: 10%">
+                <button id="userLogin" class="layui-btn layui-btn-fluid layui-btn-radius" lay-submit lay-filter="userLogin">登录</button>
+            </div>
+            <div class="layui-word-aux" style="position: relative;top: 40px;">
+                <div class="layui-inline">
+                    <input type="checkbox" name="remember">记住密码
+                </div>
+                <div class="layui-inline layui-layout-right" style="position: absolute;right: 40px">
+                    <a href="#" id="toadd" style="color: #009688">去注册></a>
+                </div>
+
+            </div>
+        </div>
+    </form>
+    </div>
+</div>
+
+
+
+<div id="add_page" class="logadd_page" style="display: none">
+    <div style="width: 80%;position: absolute;left: 10%"><hr class="layui-bg-green" style="height: 5px"></div><br>
+    <div style="position: relative;top: 30px">
+        <form class="layui-form layui-form-pane" action="#" lay-filter="userAdd">
+            <div class="layui-form-item" style="width: 95%;position: relative;left: -5%">
+                <label class="layui-form-label" >
+                    <i class="layui-icon layui-icon-username" style="font-size: 20px"></i>
+                </label>
+                <div class="layui-input-block">
+                    <input type="text" name="username" required  lay-verify="required" placeholder="请输入账号" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item" style="width: 95%;position:relative;left: -5%">
+                <label class="layui-form-label">
+                    <i class="layui-icon layui-icon-password" style="font-size: 20px"></i>
+                </label>
+                <div class="layui-input-block">
+                    <input type="password" name="password" required lay-verify="required" placeholder="请输入密码" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+
+            <div class="layui-form-item" style="width: 95%;position:relative;left: -5%">
+                <label class="layui-form-label">
+                    <i class="layui-icon layui-icon-vercode" style="font-size: 20px"></i>
+                </label>
+                <div class="layui-input-block">
+                    <!--滑动验证-->
+                    <div class="verify-wrap" id="verify-wrap2"></div>
+                </div>
+            </div>
+
+
+            <div class="layui-form-item">
+                <div class="" style="width: 80%;position:absolute;left: 10%">
+                    <button id="addUser" class="layui-btn layui-btn-fluid layui-btn-radius" lay-submit  lay-filter="addUser">注册</button>
+                </div>
+                <div class="layui-word-aux" style="position: relative;top: 40px;">
+                    <div class="layui-inline layui-layout-right" style="position: absolute;right: 40px">
+                        <a id="tolog" href="#" style="color: #009688">去登录></a>
+                    </div>
+
+                </div>
+            </div>
+
+
+
+        </form>
+    </div>
+</div>
+
+
+
+<script>
+    //Demo
+    var $;
+    var verification = false;
+    layui.use(['form','layer'], function(){
+        var form = layui.form,
+        $=layui.jquery;
+
+        $("#log_page [name = username]").blur(function () {
+            var $this = $(this);
+            var username = $this.val();
+            var $pswd = $("#log_page [name = password]");
+            var $remember = $("#log_page [name=remember]");
+            $.ajax({
+                type:'post',
+                url:'/user/getCookieAccount',
+                data:{username:username},
+                success:function (data) {
+                    if(data != null && data !== ""){
+                        $pswd.val(data);
+                        $remember.attr('checked', true);
+                        $remember.next().addClass("layui-form-checked");
+                    }else {
+                        $pswd.val(null);
+                        $remember.attr('checked', false);
+                        $remember.next().removeClass("layui-form-checked");
+                    }
+
+                },
+                error:function () {
+                    parent.layer.msg("系统错误",{icon:2});
+                }
+
+            })
+        });
+
+
+        //登录和注册的ajax方式提交到后台
+        form.on('submit(addUser)', function(data){
+            if(verification){
+                $.ajax({
+                    type:'post',
+                    url:'/user/user_add',
+                    data:{
+                        username:data.field.username,
+                        password:data.field.password
+                    },
+                    success:function (data1) {
+                        if(data1 == '注册成功'){
+                            parent.layer.msg(data1,{icon:1});
+                            $("#log_page").show();
+                            $("#add_page").hide();
+
+                        }else {
+                            parent.layer.msg(data1,{icon:2});
+                        }
+
+                    },
+                    error:function (data1) {
+                        parent.layer.msg(data1,{icon:2});
+                    }
+
+                });
+            }else {
+                parent.layer.msg("请滑动滑块完成验证",{icon:2,anim:6});
+            }
+
+            return false; //阻止表单跳转。如果需要表单跳转，去掉这段即可。
+        });
+
+        form.on('submit(userLogin)', function(data){
+                $.ajax({
+                    type:'post',
+                    url:'/user/user_login',
+                    data:{
+                        username:data.field.username,
+                        password:data.field.password,
+                        remember:data.field.remember
+                    },
+                    success:function (data1) {
+                        if(data1 == '登录成功'){
+                            parent.layer.msg(data1,{icon:1});
+                            setTimeout("parent.location.reload();",1000);
+                        }else if(data1 == '登录失败'){
+                            parent.layer.msg("登录失败，请检查您的账号密码并重试",{icon:2});
+                        }else {
+                            parent.layer.msg(data1,{icon:4});
+                        }
+
+
+                    },
+                    error:function (data1) {
+                        parent.layer.msg('服务器错误',{icon:2});
+                    }
+
+                });
+                     return false; //阻止表单跳转。如果需要表单跳转，去掉这段即可。
+        });
+
+
+
+        //登录与注册页面的切换
+        $("#toadd").click(function () {
+           $("#add_page").show();
+            $("#log_page").hide();
+        });
+        $("#tolog").click(function () {
+            $("#log_page").show();
+            $("#add_page").hide();
+        });
+
+
+        //滑块验证
+        var SlideVerifyPlug = window.slideVerifyPlug;
+
+        var slideVerify2 = new SlideVerifyPlug('#verify-wrap2',{
+            wrapWidth:'315',
+            initText:'请拖动滑块验证',
+            sucessText:'验证通过',
+            getSucessState:function(res){
+                //当验证完成的时候 会 返回 res 值 true，只留了这个应该够用了
+                if(res){
+                    verification = true;
+                }else {
+                    verification =false;
+                }
+            }
+        });
+
+    });
+</script>
+
+</body>
+</html>

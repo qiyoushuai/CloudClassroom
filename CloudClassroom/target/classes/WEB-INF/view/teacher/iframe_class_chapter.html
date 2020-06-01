@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>章节信息</title>
+    <script src="../static/layui/layui.js"></script>
+    <link rel="stylesheet" href="../static/layui/css/layui.css">
+    <style>
+        .layui-form{
+            position: absolute;
+            left: 260px;
+            top: 50px;
+        }
+        .layui-form-item{
+            width: 500px;
+        }
+        .layui-form-label {
+            width: 90px !important;
+        }
+        .layui-input{
+            width: 300px !important;
+        }
+        .layui-progress{
+            margin: 25px 0px 0px 10px;
+        }
+        .layui-form-item {
+            margin-bottom: 30px !important;
+        }
+        .thirtyPx{
+            height: 30px;
+            line-height: 30px;
+            width: max-content;
+            position: absolute;
+            display: flex;
+            left: 250px;
+            top: 140px;
+        }
+    </style>
+</head>
+<body>
+<div id="chapter_info">
+    <form class="layui-form" action="#">
+        <div class="layui-form-item">
+            <label class="layui-form-label">节点名称</label>
+            <div class="layui-input-block">
+                <input type="text" name="cha_name"  disabled  value="${chapter.cha_name}" style="width: 500px" lay-verify="required" placeholder="请输入标题" autocomplete="off" class="layui-input">
+                <input type="text" name="cha_id" required  value="${chapter.id}" style="display: none" lay-verify="required" placeholder="请输入标题" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        @if(chapter.url == null){
+        <div class="layui-form-item">
+            <label class="layui-form-label">课程虚拟路径</label>
+            <div class="layui-input-block">
+                <input type="text" name="cha_url"  disabled  value="无" style="width: 500px" lay-verify="required" placeholder="请输入标题" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        @}else{
+        <div class="layui-form-item">
+            <label class="layui-form-label">课程虚拟路径</label>
+            <div class="layui-input-block">
+                <input type="text" name="cha_url"  disabled  value="/resources${chapter.url}" style="width: 500px" lay-verify="required" placeholder="请输入标题" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        @}
+
+        <div class="thirtyPx">
+            <i class="layui-icon layui-icon-tips" style="color: #8D8D8D;font-size: 12px"></i>
+            <p style="font-size: 12px;color: #8D8D8D;width: 600px">
+
+                视频文件仅支持上传 “MP4”、“MOV”格式
+            </p>
+        </div>
+
+        <div class="layui-form-item">
+            <label class="layui-form-label">上传课程视频</label>
+            <div class="layui-input-block">
+                <button type="button" class="layui-btn" id="class_video"><i class="layui-icon"></i>上传视频</button>
+                <div style="margin-top: 15px; width:300px;display: none" class="progress">
+                    <div class="layui-progress " lay-showpercent="true" lay-filter="upload_video">
+                        <div class="layui-progress-bar" lay-percent="0%"></div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+        <div class="layui-form-item layui-hide">
+            <div class="layui-input-block">
+                <button class="layui-btn" id="submit_video" lay-submit lay-filter="formDemo">立即提交</button>
+            </div>
+        </div>
+    </form>
+</div>
+<script>
+    layui.use(['form','layer','table','element','upload'], function(){
+        var layer = layui.layer
+            ,table = layui.table
+            ,$ = layui.jquery
+            ,form = layui.form
+            ,element = layui.element,
+             upload = layui.upload;
+        var video_url ;
+
+        form.on('submit(formDemo)', function(data){
+            var cha_id =$("[name=cha_id]").val();
+            if(video_url == null || video_url == ""){
+                parent.parent.layer.alert('请先上传您的课程视频再提交',{icon:0,closeBtn:0});
+                return false;
+            }
+            $.ajax({
+                type:'post',
+                url:'/teac/setChapterUrl',
+                data:{
+                    cha_id:cha_id,
+                    video_url:video_url
+                },
+                success:function (data) {
+                    var demoTree = parent.DemoTree;
+                    parent.parent.layer.msg(data);
+                    demoTree.reload(demoTree, {
+                        url: '/teac/getChapter?curr_id=${chapter.curr_id}'
+                    });
+                },
+                error:function () {
+                    parent.parent.layer.msg("系统错误",{icon:2})
+                }
+
+            });
+
+            return false; //阻止表单跳转。如果需要表单跳转，去掉这段即可。
+        });
+
+        upload.render({
+            elem: '#class_video'
+            ,url: '/repository/video_upload' //改成您自己的上传接口
+            ,accept: 'video' //视频
+            ,exts:'mov|mp4'
+            ,progress: function(n, elem){
+                $(".progress").show(500);
+                var percent = n + '%'; //获取进度百分比
+                element.progress('upload_video', percent); //可配合 layui 进度条元素使用
+                if(n == 100){
+                    $(".progress").hide(500);
+                }
+            }
+            ,done: function(res){
+                video_url = res.data.res;
+                var url1 = video_url.substring(video_url.lastIndexOf("\\",video_url.lastIndexOf("\\")-1));
+                var url2 = "/resources"+url1.replace("\\","/");
+                $("[name=cha_url]").val(url2);
+                $("#submit_video").trigger("click");
+            }
+            ,error: function(){
+                parent.parent.layer.msg('服务器错误');
+            }
+        });
+    })
+</script>
+</body>
+</html>

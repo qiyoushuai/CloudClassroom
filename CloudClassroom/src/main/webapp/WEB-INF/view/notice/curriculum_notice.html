@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>我开设的课程空白页</title>
+    <script src="../static/layui/layui.js"></script>
+    <link rel="stylesheet" href="../static/layui/css/layui.css">
+    <style>
+        .message {
+            position: absolute;
+            left: 250px;
+            top: 30px;
+        }
+        p{
+            font-size: 40px;
+            color: #666666;
+        }
+        img{
+            width: 150px;
+        }
+    </style>
+</head>
+<body>
+<div class="message">
+    <div class="layui-inline">
+        <img src="../static/img/课程.png">
+    </div>
+    <div class="layui-inline">
+        <p>请点击左侧列表进行选择</p>
+    </div>
+   
+</div>
+<script>
+    layui.use(['form','layer','table','element','upload'], function(){
+        var layer = layui.layer
+            ,table = layui.table
+            ,$ = layui.jquery
+            ,form = layui.form
+            ,element = layui.element,
+            upload = layui.upload;
+
+    })
+</script>
+</body>
+</html>

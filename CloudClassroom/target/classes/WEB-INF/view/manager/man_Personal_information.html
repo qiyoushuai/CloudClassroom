@@ -1,0 +1,721 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <title>个人信息</title>
+    <script src="../static/layui/layui.js"></script>
+    <link rel="stylesheet" href="../static/layui/css/layui.css">
+    <style>
+        html{
+            overflow: auto;
+        }
+        .recharge_btn{
+            position: absolute;
+            left: 150px;
+            top: -53px;
+        }
+        .recharge_text{
+            position: relative;
+            left: 20px;
+            width: 50% !important;
+        }
+        .layui-layout-admin .layui-footer{
+            left: 0px !important;
+        }
+        .layui-layout-admin .layui-logo{
+            color: white !important;
+        }
+        .layui-body{
+            width: 75% !important;
+            left: 15% !important;
+            top: 0px !important;
+            background: #ffffff;
+            height: max-content;
+        }
+        body{
+            background: #eee;
+        }
+        .layui-layout-admin .layui-body{
+            position: relative !important;
+
+        }
+        .layui-tab-content{
+            position: relative;
+            top: -10px !important;
+        }
+        .layui-tab-title{
+            top: -10px !important;
+            background: #FAFAFA !important;
+        }
+
+        .layui-tab-content .layui-form-item{
+            position: relative;
+            left: 50px;
+        }
+        .form_title{
+            height: 40px;
+            position: relative;
+            left: 20px;
+        }
+        .layui-tab-content{
+            padding: 30px 10px !important;
+        }
+        .layui-textarea {
+            width: 400px !important;
+        }
+        .layui-tab-content .layui-input{
+            width: 300px !important;
+        }
+        .form_submit {
+            padding: 30px 0px;
+            margin: 20px 0px 0px;
+            background: #fafafa;
+            width: 1160px;
+            position: relative;
+            left: -10px;
+            top: 50px;
+        }
+        .change_pswd{
+            padding: 30px 0px 0px 0px;
+        }
+
+        .form_msg{
+            position: relative;
+            height: 20px;
+            line-height: 20px;
+            top: -10px;
+            left: -10px;
+            width: 1140px;
+        }
+        .form_msg_child{
+            width: 400px;
+            position: relative;
+            left: 860px;
+        }
+
+
+
+        /*控制三级菜单的样式*/
+        .nav-lv3 a {
+            display: inline !important;
+            white-space: nowrap;
+            padding: 5px 10px !important;
+        }
+        .nav-lv3 {
+            z-index: 120;
+            display: none;
+            position: absolute;
+            background: #fff;
+            width: 550px;
+            white-space: normal !important;
+            left: 90px;
+            margin: 0px 0px 0px 19px;
+            top: 0px;
+            border: 1px solid #d2d2d2;
+            padding: 16px;
+            box-shadow: 0 2px 4px rgba(0,0,0,.12);
+        }
+        .layui-nav .layui-this:after{
+            width: 0px !important;
+        }
+
+    </style>
+
+</head>
+<body class="layui-layout-body">
+
+
+<script>
+
+    /*检验登录失效*/
+    layui.use(['element','layer'], function() {
+        var $ = layui.jquery;
+        $('html').on('click',function () {
+            chackUser();
+        });
+
+        $('iframe').contents().on('click',function () {
+            chackUser();
+        });
+        var chackUser = function () {
+            if('${session.username}' == null || '${session.username}' == '' ) {
+                layer.alert("登录已超时，请重新登录", {icon: 5,closeBtn:0}, function () {
+                    location.href = "/";
+                });
+            }
+        }
+    });
+</script>
+
+
+<div class="layui-layout layui-layout-admin">
+    <div class="layui-header">
+        <div class="layui-logo"  style="cursor: pointer" onclick="location.href='/'">
+            <div class="layui-inline">
+                <i class="layui-icon layui-icon-read" style="font-size: 26px"></i>
+            </div>
+            <div class="layui-inline" >
+                <p style="font-size: 22px">智慧云学堂</p>
+            </div>
+
+
+        </div>
+        <!-- 头部区域（可配合layui已有的水平导航） -->
+        <ul class="layui-nav layui-layout-left">
+            <li class="layui-nav-item"><a href="/">首页</a></li>
+            <li class="layui-nav-item">
+                <a href="javascript:;">课程分类</a>
+                <dl class="layui-nav-child">
+                    @var haschile = 0;
+                    @for(cla in session.classifies){
+                    @haschile = 0;
+                    @if(cla.field == 1001){
+                    <dd>
+                        <a href="/page/home_queryCurr?classify_id=${cla.id}">${cla.title}</a>
+                        @for(cla1 in session.classifies){if(cla1.field == cla.id){ haschile++; }}
+                        @if(haschile >0){
+                        <div class="nav-lv3 layui-anim layui-anim-fadein">
+                                 <span class="layui-breadcrumb" lay-separator="|">
+                                     @for(cla1 in session.classifies){
+                                      @if(cla1.field == cla.id){
+                                        <a href="/page/home_queryCurr?classify_id=${cla1.id}">${cla1.title}</a>
+                                       @}
+                                  @}
+                                </span>
+                        </div>
+                        @}
+                    </dd>
+                    @}
+                    @}
+
+                </dl>
+            </li>
+
+        </ul>
+        <div style="position: absolute;left: 400px;top: 10px">
+            <form class="layui-form" action="/page/home_queryCurr" method="post">
+                <div class="layui-form-item">
+
+                    <div class="layui-input-block">
+                        <div class="layui-inline">
+                            <input type="text" name="curr_name" required  lay-verify="required" placeholder="搜索课程" autocomplete="off" class="layui-input">
+                        </div>
+                        <div class="layui-inline">
+                            <button type="submit" class="layui-btn layui-btn-radius">
+                                <i class="layui-icon">&#xe615;</i>
+                            </button>
+                        </div>
+
+
+                    </div>
+                </div>
+            </form>
+        </div>
+        <ul class="layui-nav layui-layout-right">
+            <li class="layui-nav-item">
+                <a href="javascript:;">
+                    @if(session.pur_url != "" && session.pur_url !=null){
+                    <img src="/resources/${session.pur_url}" class="layui-nav-img">
+                    @}else{
+                    <img src="/resources/purikura/purikura.png" class="layui-nav-img">
+                    @}
+                    @if(session.user_name == null || session.user_name == "" ){
+                    ${session.username}
+                    @}else{
+                    ${session.user_name}
+                    @}
+                </a>
+                <dl class="layui-nav-child">
+                    <dd><a href="/page/homePage_Personal" >个人主页</a></dd>
+                    <dd><a href="/page/personal_information">个人信息</a></dd>
+                    @if(session.user_type == 3){
+                    <dd><a href="/page/teacher_application?id=${session.user_id}">教师资格申请</a></dd>
+                    @}
+                </dl>
+            </li>
+            <li class="layui-nav-item"><a href="/user/logout">退了</a></li>
+        </ul>
+    </div>
+
+
+    <div style="height: 20px"></div>
+     <div class="layui-body">
+         <!-- 内容主体区域 -->
+         <div>
+             <div class="layui-tab" lay-filter="test">
+                 <ul class="layui-tab-title">
+                     <li class="layui-this" lay-id="1">资料设置</li>
+                     <li lay-id="2">安全设置</li>
+                     <li lay-id="33">账户设置</li>
+                 </ul>
+                 <div class="layui-tab-content">
+                     <!--个人信息页面-->
+                     <div class="layui-tab-item layui-show">
+
+                         <form class="layui-form" action="#" lay-filter="information" enctype="multipart/form-data">
+                             <div class="form_msg">
+                                 <div class="form_msg_child">
+                                     <i class="layui-icon layui-icon-tips layui-inline" style="font-size: 14px;color: darkgray"></i>
+                                     <p class="layui-inline" style="font-size: 14px;color: darkgray">申请教师资格时需填写完整的联系信息</p>
+
+                                 </div>
+
+                             </div>
+                             <div class="form_title">
+                                 <p style="font-size: 21px;font-weight: 400;color: #444444">基本信息</p>
+                             </div>
+                             <div class="layui-form-item">
+                                 <label class="layui-form-label">昵称</label>
+                                 <div class="layui-input-block">
+                                     <input type="text" name="name"  placeholder="请输入昵称" autocomplete="off" class="layui-input">
+                                 </div>
+                             </div>
+                             <div class="layui-form-item">
+                                 <label class="layui-form-label">个人头像</label>
+                                 <div class="layui-input-inline">
+                                     <div class="layui-upload">
+                                         <button type="button" class="layui-btn" id="purikura">上传图片</button>
+                                         <div class="layui-upload-list">
+                                             @if(session.pur_url != "" && session.pur_url !=null){
+                                             <img class="layui-upload-img" style="width: 100px;height: 100px" src="/resources/${session.pur_url}" id="demo1">
+                                             @}else{
+                                             <img class="layui-upload-img" style="width: 100px;height: 100px" src=" /resources/purikura/purikura.png" id="demo1">
+
+                                             @}
+
+                                             <p id="demoText"></p>
+                                         </div>
+                                     </div>
+                                 </div>
+                             </div>
+                             <div class="layui-form-item">
+                                 <label class="layui-form-label">性别</label>
+                                 <div class="layui-input-block">
+                                     <input type="radio" name="sex" value="男" title="男">
+                                     <input type="radio" name="sex" value="女" title="女">
+                                     <input type="radio" name="sex" value="保密" title="保密" checked>
+                                 </div>
+                             </div>
+                             <div class="layui-form-item layui-form-text">
+                                 <label class="layui-form-label">个人介绍</label>
+                                 <div class="layui-input-block">
+                                     <textarea name="profile" placeholder="请输入内容" class="layui-textarea"></textarea>
+                                 </div>
+                             </div>
+                             <div class="form_title">
+                                 <p style="font-size: 21px;font-weight: 400;color: #444444;margin: 40px 0px 0px">联系信息</p>
+                             </div>
+                             <div class="layui-form-item">
+                                 <label class="layui-form-label">真实姓名</label>
+                                 <div class="layui-input-block">
+                                     <input type="text" name="relname"    placeholder="请输入真实姓名" autocomplete="off" class="layui-input user_message">
+                                 </div>
+                             </div>
+                             <div class="layui-form-item">
+                                 <label class="layui-form-label">邮箱</label>
+                                 <div class="layui-input-block">
+                                     <input type="text" name="email" lay-verify="emailmsg"   placeholder="请输入常用邮箱" autocomplete="off" class="layui-input user_message">
+                                 </div>
+                             </div>
+                             <div class="layui-form-item">
+                                 <label class="layui-form-label">手机号</label>
+                                 <div class="layui-input-block">
+                                     <input type="text" name="phone" lay-verify="phonemsg"   placeholder="请输入您的手机号" autocomplete="off" class="layui-input user_message">
+                                 </div>
+                             </div>
+                             <div class="layui-form-item">
+                                 <label class="layui-form-label">家庭住址</label>
+                                 <div class="layui-input-block">
+                                     <input type="text" name="address"    placeholder="请输入您的家庭住址" autocomplete="off" class="layui-input user_message">
+                                 </div>
+                             </div>
+
+                            <div class="form_submit">
+                             <div class="layui-form-item">
+                                 <div class="layui-input-block">
+                                     <button id="action" lay-submit lay-filter="info_sub" class="layui-btn" type="button">立即提交</button>
+                                 </div>
+                             </div>
+                            </div>
+                         </form>
+
+
+                     </div>
+                     <!--修改账号密码页面-->
+                         <div class="layui-tab-item">
+                             <div class="form_title">
+                                 <p style="font-size: 21px;font-weight: 400;color: #444444">修改密码</p>
+                             </div>
+                             <form class="layui-form change_pswd" action="#">
+                                 <div class="layui-form-item">
+                                     <label class="layui-form-label">原密码</label>
+                                     <div class="layui-input-block">
+                                         <input type="password" name="pswd_old"   autocomplete="off" class="layui-input">
+                                     </div>
+                                 </div>
+                                 <div class="layui-form-item">
+                                     <label class="layui-form-label">新密码</label>
+                                     <div class="layui-input-block">
+                                         <input type="password" name="pswd_new"  autocomplete="off" class="layui-input">
+                                     </div>
+                                 </div>
+                                 <div class="layui-form-item">
+                                     <label class="layui-form-label">确认新密码</label>
+                                     <div class="layui-input-block">
+                                         <input type="password" name="repswd_new"   autocomplete="off" class="layui-input">
+                                     </div>
+                                 </div>
+                                 <div class="form_submit">
+                                     <div class="layui-form-item">
+                                         <div class="layui-input-block">
+                                             <button id="pswd_submit" lay-submit lay-filter="pswd_submit" class="layui-btn" type="button" >立即提交</button>
+                                         </div>
+                                     </div>
+                                 </div>
+                             </form>
+
+                         </div>
+
+                             <!--账户余额页面-->
+                     <div class="layui-tab-item">
+                         <div class="">
+                             <div class="form_title">
+                                 <p style="font-size: 21px;font-weight: 400;color: #444444">我的账户</p>
+                             </div>
+                             <div class="layui-form-item">
+                                 <label class="layui-form-label">
+                                     <i class="layui-icon layui-icon-rmb layui-inline" style="font-size: 18px"></i>
+                                     <p class="layui-inline" style="font-size: 18px">余额</p>
+                                 </label>
+                                 <div class="layui-input-block" style="line-height: 36px">
+                                     <p style="color: #444444;font-size: 18px" class="layui-inline">${session.user_money}</p>
+                                     <button id="recharge" class="layui-btn layui-btn-xs layui-btn-primary layui-inline">充值</button>
+                                 </div>
+                             </div>
+                         </div>
+                     </div>
+
+
+
+
+
+         </div>
+     </div>
+
+  <!--  <div class="layui-footer">
+        &lt;!&ndash; 底部固定区域 &ndash;&gt;
+        © qiyoushuai.com - 底部固定区域
+    </div>-->
+</div>
+     </div>
+</div>
+
+
+<div id="recharge_div" style="display: none">
+    <blockquote class="layui-elem-quote">请输入您要充值的余额</blockquote>
+    <form class="layui-form" action="">
+        <div class="layui-form-item">
+
+                <input type="text"  name="money" required  lay-verify="money" placeholder="请输入金额" autocomplete="off" class="layui-input recharge_text">
+
+        </div>
+        <div class="layui-form-item">
+            <div class="layui-input-block">
+                <button class="layui-btn recharge_btn" lay-submit lay-filter="recharge">充值</button>
+            </div>
+        </div>
+    </form>
+</div>
+
+<script>
+    //JavaScript代码区域
+    layui.use(['element','layer','form','upload'], function(){
+        var element = layui.element
+            ,layer = layui.layer
+            ,$ = layui.jquery
+            ,form = layui.form
+            ,upload = layui.upload;
+        var user_id = "${session.user_id}";
+        var user_type = "${session.user_type}";
+        if(user_type == 2){
+             $(".user_message").attr("readonly","readonly");
+         }
+
+
+        //获取个人信息给表单赋值
+        var getInfo = $.ajax({
+            type: 'post',
+            url: '/user/getInfo',
+            data:{
+               id: user_id
+            },
+            success:function (data) {
+                var sex = null;
+                if(data.sex == 1){
+                    sex = "男";
+                }else if(data.sex ==2){
+                    sex = "女";
+                }else{
+                    sex = "保密";
+                }
+                //给表单赋值
+                form.val("information", { //formTest 即 class="layui-form" 所在元素属性 lay-filter="" 对应的值
+                    "name": data.name // "name": "value"
+                    ,"sex": sex
+                    ,"profile": data.profile
+                    ,"relname": data.relname
+                    ,"email": data.email
+                    ,"phone": data.phone
+                    ,"address":data.address
+                });
+
+
+            },
+            error: function (data) {
+                layer.msg("服务器错误",{icon:2})
+            }
+        });
+
+        //个人余额点击充值按钮
+        $("#recharge").click(function () {
+            layer.open({
+                type:1,
+                title:"余额充值",
+                skin: 'layui-layer-demo', //样式类名
+                area: ['450px', '220px'],
+                closeBtn: 1, //不显示关闭按钮
+                fixed: true,
+                move: false,
+                anim: 2,
+                shadeClose: true, //开启遮罩关闭
+                content:$("#recharge_div")
+            })
+        });
+
+        //监听充值
+        form.on('submit(recharge)', function(data){
+           var data = data.field; //当前容器的全部表单字段，名值对形式：{name: value}
+            $.ajax({
+                type:'post',
+                url:'/user/recharge',
+                data:{
+                    money:data.money
+                },
+                success:function (data) {
+                   parent.layer.msg(data,{anim:5},function () {
+                       parent.location.reload();
+                   })
+                },
+                error:function () {
+                    parent.layer.msg("系统错误",{anim:6,icon:2})
+                }
+            });
+            return false; //阻止表单跳转。如果需要表单跳转，去掉这段即可。
+        });
+
+        //实现表单上传功能！  并执行图片上传功能
+        var img_upload = true;
+        var img_url;
+        var val;
+
+        //个人信息修改tab
+        form.on('submit(info_sub)',function (data) {
+             val = data.field;
+             uploadInst.upload();
+             setTimeout(form_submit,1000);
+            return false;
+        });
+        //更改密码tab
+        form.on('submit(pswd_submit)',function (data) {
+            val = data.field;
+            var pswd_ole = val.pswd_old;
+            var pswd_new = val.pswd_new;
+            var repswd_new = val.repswd_new;
+            /*表单验证*/
+            if(pswd_ole == null || pswd_ole ==""){
+                layer.msg("原密码不可为空",{icon:5});
+                return ;
+            }
+            if(pswd_new == null || pswd_new ==""){
+                layer.msg("新密码不可为空",{icon:5});
+                return ;
+            }
+            if(repswd_new == null || repswd_new ==""){
+                layer.msg("确认密码不可为空",{icon:5});
+                return ;
+            }
+            if(pswd_new == pswd_ole){
+                layer.msg("新密码不可与原密码一致",{icon:5});
+                return ;
+            }
+            if(pswd_new != repswd_new){
+                layer.msg("确认密码与新密码不一致",{icon:5});
+                return ;
+            }
+            $.ajax({
+                url: '/user/changePswd',
+                type: 'post',
+                data:{
+                    id:"${session.user_id}",
+                    pswd_old:pswd_ole ,
+                    pswd_new:pswd_new
+                },
+                success:function (data) {
+                    if(data == "修改成功"){
+                        layer.msg(data+",请重新登录",{icon:1},function () {
+
+                                location.href = "/user/logout";
+
+                        })
+                    }else {
+                        layer.msg(data,{icon:2})
+                    }
+                },
+                error:function () {
+                    layer.msg("服务器错误",{icon:2})
+                }
+
+            });
+            return false;
+        });
+
+
+         function form_submit() {
+
+            var sex = null;
+            var user_id = "${session.user_id}";
+            if(val.sex == "男"){
+                sex = 1;
+            }else if(val.sex =="女"){
+                sex = 2;
+            }else{
+                sex = 3;
+            }
+
+            /*alert(val.email);*/
+
+            if(!img_upload){
+                layer.msg("头像上传失败",{icon:2})
+            }else {
+                $.ajax({
+                    type: 'post',
+                    url: '/user/edit_info',
+                    async: false,
+                    data:{
+                        id: user_id,
+                        name: val.name,
+                        sex: sex,
+                        profile: val.profile,
+                        relname: val.relname,
+                        email: val.email,
+                        phone: val.phone,
+                        purikura: img_url,
+                        address: val.address
+                    },
+                    success:function (data) {
+                        if(data == "更新成功！"){
+                            layer.msg(data,{icon:1},function () {
+                                location.reload();
+                            });
+                        }else {
+                            layer.msg(data,{icon:2})
+                        }
+                    },
+                    error: function (data) {
+                        layer.msg("服务器错误",{icon:5})
+                    }
+                })
+            }
+
+        }
+
+        //Hash地址的定位
+        var layid = location.hash.replace(/^#test=/, '');
+        element.tabChange('test', layid);
+
+        element.on('tab(test)', function(elem){
+            location.hash = 'test='+ $(this).attr('lay-id');
+        });
+
+
+        //普通图片上传
+        var uploadInst = upload.render({
+            elem: '#purikura'
+            ,url: '/repository/purikura_upload' //上传接口
+            ,auto: false
+            ,async: false
+            ,accept: 'images'
+           /* ,bindAction: '#action'*/
+            ,choose: function(obj){
+                //预读本地文件示例，不支持ie8
+                obj.preview(function(index, file, result){
+                    $('#demo1').attr('src', result); //图片链接（base64）
+                });
+            }
+            ,done: function(res){
+                //如果上传失败
+                if(res.code > 0){
+                    img_upload = false;
+                    return false;
+                }if(res.code == 0){
+                    img_url = res.data.res;
+                }
+                //上传成功
+            }
+            ,error: function(){
+               layer.msg("上传失败",{icon:2})
+            }
+        });
+
+
+        //设置手机号验证和邮箱验证自定义规则
+        form.verify({
+            phonemsg: function(value, item){ //value：表单的值、item：表单的DOM对象
+                if(value!=""){  //值不是空的时候再去走验证
+                    if(!/^1[3|4|5|7|8]\d{9}$/.test(value)){
+                        return '手机号格式不正确';
+                    }
+                }
+            }
+           , emailmsg: function (value, item) {
+                if(value!=""){
+                    if(!/^\w+\@\w+(\.\w+){1,2}$/.test(value)){
+                        return '邮箱格式不正确';
+                    }
+                }
+            }
+            ,money:function (value,item) {
+                    if(value==""){
+                        return '请输入您要充值的金额';
+                    }
+                    if(!/^\d+(\.\d{0,2})?$/.test(value)){
+                        return '请输入正确的金额';
+                    }
+            }
+        });
+
+
+        /*=======================================================*/
+        //控制三级菜单的显示与隐藏
+        var none;
+        $(".nav-lv3").hover(function () {
+            clearTimeout(none);
+            $(this).css("display","block");
+        },function () {
+            clearTimeout(none);
+            $(this).css("display","none");
+        });
+        $(".layui-nav-child dd").hover(function () {
+            clearTimeout(none);
+            $(this).siblings().find(".nav-lv3").css("display","none");
+            $(this).find('.nav-lv3').css("display","block");
+        },function () {
+            var $this = $(this);
+            none = setTimeout(function (){$this.find(".nav-lv3").css("display","none")},300)
+        });
+        /*============================================================*/
+    });
+</script>
+</body>
+</html>

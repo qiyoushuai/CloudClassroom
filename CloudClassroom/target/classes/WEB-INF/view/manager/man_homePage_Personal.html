@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <title>个人主页</title>
+    <script src="../../../static/layui/layui.js"></script>
+    <link rel="stylesheet" href="../../../static/layui/css/layui.css">
+    <style>
+        .first-tab i.layui-tab-close{
+            display:none!important;
+        }
+        .layui-layout-admin .layui-logo{
+            color: white !important;
+        }
+        .layui-layout-admin .layui-side .layui-nav{
+            background-color: #24262f !important;
+        }
+        .layui-layout-admin .layui-side{
+            background-color: #24262f !important;
+        }
+        /*.layui-layout-admin .layui-header{
+            background-color:  #2B2D36 !important;
+        }*/
+            /*  .layui-nav-tree .layui-nav-item a{
+                  height: 60px !important;
+                  line-height: 60px !important;
+              }
+              .layui-nav-tree .layui-nav-child a{
+                  height: 50px !important;
+                  line-height: 50px !important;
+              }*/
+
+
+        /*控制三级菜单的样式*/
+        .nav-lv3 a {
+            display: inline !important;
+            white-space: nowrap;
+            padding: 5px 10px !important;
+        }
+        .nav-lv3 {
+            z-index: 120;
+            display: none;
+            position: absolute;
+            background: #fff;
+            width: 550px;
+            white-space: normal !important;
+            left: 90px;
+            margin: 0px 0px 0px 19px;
+            top: 0px;
+            border: 1px solid #d2d2d2;
+            padding: 16px;
+            box-shadow: 0 2px 4px rgba(0,0,0,.12);
+        }
+        .layui-nav .layui-this:after{
+            width: 0px !important;
+        }
+    </style>
+
+</head>
+<body class="layui-layout-body">
+
+
+<script>
+
+    /*检验登录失效*/
+    layui.use(['element','layer'], function() {
+        var $ = layui.jquery;
+        $('html').on('click',function () {
+            chackUser();
+        });
+
+        $('iframe').contents().on('click',function () {
+            chackUser();
+        });
+        var chackUser = function () {
+            if('${session.username}' == null || '${session.username}' == '' ) {
+                layer.alert("登录已超时，请重新登录", {icon: 5,closeBtn:0}, function () {
+                    location.href = "/";
+                });
+            }
+        }
+    });
+</script>
+
+
+<div class="layui-layout layui-layout-admin">
+    <div class="layui-header">
+        <div class="layui-logo" style="cursor: pointer" onclick="location.href='/'" >
+            <div class="layui-inline">
+                <i class="layui-icon layui-icon-read" style="font-size: 26px"></i>
+            </div>
+            <div class="layui-inline" >
+                <p style="font-size: 22px">智慧云学堂</p>
+            </div>
+
+        </div>
+        <!-- 头部区域（可配合layui已有的水平导航） -->
+        <ul class="layui-nav layui-layout-left">
+            <li class="layui-nav-item"><a href="/">首页</a></li>
+            <li class="layui-nav-item">
+                <a href="javascript:;">课程分类</a>
+                <dl class="layui-nav-child">
+                    @var haschile = 0;
+                    @for(cla in session.classifies){
+                    @haschile = 0;
+                    @if(cla.field == 1001){
+                    <dd>
+                        <a href="/page/home_queryCurr?classify_id=${cla.id}">${cla.title}</a>
+                        @for(cla1 in session.classifies){if(cla1.field == cla.id){ haschile++; }}
+                        @if(haschile >0){
+                        <div class="nav-lv3 layui-anim layui-anim-fadein">
+                                 <span class="layui-breadcrumb" lay-separator="|">
+                                     @for(cla1 in session.classifies){
+                                      @if(cla1.field == cla.id){
+                                        <a href="/page/home_queryCurr?classify_id=${cla1.id}">${cla1.title}</a>
+                                       @}
+                                  @}
+                                </span>
+                        </div>
+                        @}
+                    </dd>
+                    @}
+                    @}
+
+                </dl>
+            </li>
+
+        </ul>
+        <div style="position: absolute;left: 400px;top: 10px">
+            <form class="layui-form" action="/page/home_queryCurr" method="post">
+                <div class="layui-form-item">
+
+                    <div class="layui-input-block">
+                        <div class="layui-inline">
+                            <input type="text" name="curr_name" required  lay-verify="required" placeholder="搜索课程" autocomplete="off" class="layui-input">
+                        </div>
+                        <div class="layui-inline">
+                            <button type="submit" class="layui-btn layui-btn-radius">
+                                <i class="layui-icon">&#xe615;</i>
+                            </button>
+                        </div>
+
+
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        <ul class="layui-nav layui-layout-right">
+            <li class="layui-nav-item">
+                <a href="javascript:;">
+                    @if(session.pur_url != "" && session.pur_url !=null){
+                    <img src="/resources/${session.pur_url}" class="layui-nav-img">
+                    @}else{
+                    <img src="/resources/purikura/purikura.png" class="layui-nav-img">
+                    @}
+                    @if(session.user_name == null || session.user_name == "" ){
+                    ${session.username}
+                    @}else{
+                    ${session.user_name}
+                    @}
+                </a>
+                <dl class="layui-nav-child">
+                    <dd><a href="/page/homePage_Personal" >个人主页</a></dd>
+                    <dd><a href="/page/personal_information">个人信息</a></dd>
+                    @if(session.user_type == 3){
+                    <dd><a href="/page/teacher_application?id=${session.user_id}">教师资格申请</a></dd>
+                    @}
+                </dl>
+            </li>
+            <li class="layui-nav-item"><a href="/user/logout">退了</a></li>
+        </ul>
+    </div>
+
+    <div class="layui-side layui-bg-black">
+        <div class="layui-side-scroll">
+            <!-- 左侧导航区域（可配合layui已有的垂直导航） -->
+            <ul class="layui-nav layui-nav-tree"  lay-filter="test">
+                <!--个人用户、老师列表-->
+               <!--
+               <li class="layui-nav-item layui-nav-itemed">
+                    <a class="" href="javascript:;">个人管理</a>
+                    <dl class="layui-nav-child">
+                        <dd><a href="javascript:;" class="site-demo-active" data-type="tabAdd" name="information">个人信息</a></dd>
+                        <dd><a href="javascript:;" id="order" class="site-demo-active" data-type="tabAdd" name="order" >我的订单</a></dd>
+                        <dd><a href="javascript:;" id="balance" class="site-demo-active" data-type="tabAdd" name="balance" >我的余额</a></dd>
+                        <dd><a href="javascript:;" id="collection" class="site-demo-active" data-type="tabAdd" name="collection" >收藏课程</a></dd>
+                    </dl>
+                </li>
+                <li class="layui-nav-item">
+                    <a class="" href="javascript:;">课程管理</a>
+                    <dl class="layui-nav-child">
+                        <dd><a href="javascript:;" class="site-demo-active" data-type="tabAdd" name="course">我的加入课程</a></dd>
+                        <dd><a href="javascript:;" id="order" class="site-demo-active" data-type="tabAdd" name="course" >我开设的课程</a></dd>
+                       </dl>
+                </li>
+
+                -->
+                @if(session.user_type == 1){
+                <li class="layui-nav-item layui-nav-itemed">
+                    <a class="" href="javascript:;"><i class="layui-icon layui-icon-website" style="font-size: 12px"></i> &emsp;网站管理</a>
+                    <dl class="layui-nav-child">
+                        <dd><a href="javascript:;" id="saleList" class="site-demo-active" data-type="tabAdd" name="classify_list" >&emsp;&emsp;课程类别管理</a></dd>
+                        <dd><a href="javascript:;" id="homePage_carousel_manager" class="site-demo-active" data-type="tabAdd" name="homePage_carousel_manager" >&emsp;&emsp;首页轮播内容</a></dd>
+                    </dl>
+                </li>
+                <li class="layui-nav-item">
+                    <a class="" href="javascript:;"><i class="layui-icon layui-icon-template-1" style="font-size: 12px"></i> &emsp;课程管理</a>
+                    <dl class="layui-nav-child">
+                        <dd><a href="javascript:;" id="course_List" class="site-demo-active" data-type="tabAdd" name="course_List" >&emsp;&emsp;课程列表</a></dd>
+                        <dd class="applyCourse_count"><a href="javascript:;" id="tea_auditCourse" class="site-demo-active" data-type="tabAdd" name="tea_auditCourse" >&emsp;&emsp;开课审核</a>
+                            @if(session.applyCourse_count != null && session.applyCourse_count != ''&& session.applyCourse_count != 0){
+                            <span class="layui-badge" style="position: absolute;right: 5px">${session.applyCourse_count}</span>
+                            @}
+                        </dd>
+                    </dl>
+                </li>
+                <li class="layui-nav-item">
+                    <a  href="javascript:;"><i class="layui-icon layui-icon-user" style="font-size: 12px"></i>&emsp;用户管理</a>
+                    <dl class="layui-nav-child">
+                        <dd> <a href="javascript:;" class="site-demo-active" data-type="tabAdd" name="man_userList">&emsp;&emsp;用户列表</a></dd>
+                        <dd class="apply_count"> <a href="javascript:;" class="site-demo-active" data-type="tabAdd" name="tea_approval">&emsp;&emsp;教师审核</a>
+                            @if(session.apply_count != null && session.apply_count != ''&& session.apply_count != 0){
+                            <span class="layui-badge" style="position: absolute;right: 5px">${session.apply_count}</span>
+                            @}
+                        </dd>
+                    </dl>
+
+                </li>
+
+                @}else if(session.user_type == 2){
+                <li class="layui-nav-item layui-nav-itemed">
+                    <a class="" href="javascript:;"><i class="layui-icon layui-icon-template-1" style="font-size: 12px"></i> &emsp;课程管理</a>
+                    <dl class="layui-nav-child">
+                        <dd><a href="javascript:;" id="apply_class" class="site-demo-active" data-type="tabAdd" name="apply_class" >&emsp;&emsp;申请开课</a></dd>
+                        <dd><a href="javascript:;" id="apply_class_record" class="site-demo-active" data-type="tabAdd" name="apply_class_record" >&emsp;&emsp;开课申请记录</a></dd>
+                        <dd><a href="javascript:;" id="my_courses_offered" class="site-demo-active" data-type="tabAdd" name="my_courses_offered" >&emsp;&emsp;我开设的课程</a></dd>
+                        <dd><a href="javascript:;" id="courses_attended" class="site-demo-active" data-type="tabAdd" name="courses_attended" >&emsp;&emsp;我参加的课程</a></dd>
+                    </dl>
+                </li>
+                <li class="layui-nav-item">
+                    <a href="javascript:;" id="courses_buy_record"  class="site-demo-active" data-type="tabAdd" name="courses_buy_record">付费课程购买记录</a>
+                </li>
+                @}else{
+                <li class="layui-nav-item layui-nav-itemed">
+                   <dd><a href="javascript:;" id="courses_attended" class="site-demo-active" data-type="tabAdd" name="courses_attended" >我参加的课程</a>
+                </li>
+                <li class="layui-nav-item">
+                    <a href="javascript:;" id="courses_buy_record" class="site-demo-active"  data-type="tabAdd" name="courses_buy_record">付费课程购买记录</a>
+                </li>
+                @}
+
+
+
+
+
+            </ul>
+        </div>
+    </div>
+    <div class="layui-tab layui-body" lay-filter="demo"  lay-allowclose="true"  style="padding: 0">
+        <ul class="layui-tab-title">
+            <li class="layui-this first-tab" lay-id="11" >网站首页</li>
+        </ul>
+        <div class="layui-tab-content" style="padding: 0">
+            <div class="layui-tab-item layui-show">
+               <!-- <video id="video" controls="controls" width="1036px" height="548">
+                    你的浏览器貌似不支持video 元素 %>_<%
+                    <source src="/resources/video/XH市首富.HD1280高清国语中字版.mp4" type="video/mp4">
+                </video>-->
+                @if(session.user_type ==2){
+                <iframe frameborder="no" scrolling="auto"  style="height: 550px;width: 100%;" src="/page/page_teac"></iframe>
+                @}else if(session.user_type ==3){
+                <iframe frameborder="no" scrolling="auto"  style="height: 550px;width: 100%;" src="/page/page_stu"></iframe>
+                @}else if(session.user_type ==1){
+                <iframe frameborder="no" scrolling="auto"  style="height: 550px;width: 100%;" src="/page/page_manager"></iframe>
+                @}
+
+            </div>
+        </div>
+    </div>
+    <!-- <div class="layui-body">
+         &lt;!&ndash; 内容主体区域 &ndash;&gt;
+         <div style="padding: 15px;">内容主体区域</div>
+     </div>-->
+
+    <div class="layui-footer">
+        <!-- 底部固定区域 -->
+        © qiyoushuai.com - 底部固定区域
+    </div>
+</div>
+<script>
+    //JavaScript代码区域
+    layui.use(['element','layer','upload','jquery'], function(){
+        var element = layui.element
+            ,layer = layui.layer
+            ,upload=layui.upload
+            ,$ = layui.jquery;
+        /*    //触发事件
+            var active = {
+                tabAdd: function(){
+                    //新增一个Tab项
+                    element.tabAdd('demo', {
+                        title: '新选项'
+                        ,content: '内容'
+                        ,id: "test1"
+                    })
+                }
+            };
+    */
+        $(".apply_count").click(function () {
+            $(this).find('.layui-badge').addClass("layui-hide");
+        });
+
+        $(".applyCourse_count").click(function () {
+            $(this).find('.layui-badge').addClass("layui-hide");
+        });
+
+        $('.site-demo-active').on('click', function(){
+            var tabid = $(this).prop("name");
+            var title = $(this).text();
+            /*  var othis = $(this), type = othis.data('type');*/
+            /*   active[type] ? active[type].call(this, othis) : '';*/
+            if($(".layui-body ul li[lay-id="+tabid+"]").length>0){
+                element.tabChange('demo',tabid);
+                $('iframe[name='+tabid+']').attr('src', $('iframe[name='+tabid+']').attr('src'));
+            }else {
+                //新增一个Tab项
+                element.tabAdd('demo', {
+                    title: title
+                    ,content: '<iframe frameborder="no" scrolling="auto" name='+tabid+'  style="height: 550px;width: 100%;" src="/page/'+tabid+'"></iframe>'
+
+                    ,id: tabid
+                });
+                element.tabChange('demo',tabid);
+
+            }
+
+        });
+
+        //Hash地址的定位
+        var layid = location.hash.replace(/^#demo=/, '');
+        element.tabChange('demo', layid);
+
+        element.on('tab(demo)', function(elem){
+            location.hash = 'demo='+ $(this).attr('lay-id');
+        });
+
+
+        /*=======================================================*/
+        //控制三级菜单的显示与隐藏
+        var none;
+        $(".nav-lv3").hover(function () {
+            clearTimeout(none);
+            $(this).css("display","block");
+        },function () {
+            clearTimeout(none);
+            $(this).css("display","none");
+        });
+        $(".layui-nav-child dd").hover(function () {
+            clearTimeout(none);
+            $(this).siblings().find(".nav-lv3").css("display","none");
+            $(this).find('.nav-lv3').css("display","block");
+        },function () {
+            var $this = $(this);
+            none = setTimeout(function (){$this.find(".nav-lv3").css("display","none")},300)
+        });
+        /*============================================================*/
+    });
+</script>
+</body>
+</html>

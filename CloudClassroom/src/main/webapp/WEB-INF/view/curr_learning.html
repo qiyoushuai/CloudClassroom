@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>课程学习页面</title>
+    <script src="../static/layui/layui.js" type="text/javascript"></script>
+    <script src="../static/js/jquery-3.3.1.js" type="text/javascript"></script>
+    <link href="../static/layui/css/layui.css" rel="stylesheet">
+    <style>
+        .layui-layout-admin .layui-side {
+           top:0 !important;
+        }
+        .layui-layout-admin .layui-body {
+           top: 0 !important;
+            bottom: 0 !important;
+        }
+        .learn_video{
+            width: 100%;
+            height: 100%;
+        }
+        .layui-body{
+            overflow: hidden;
+        }
+        .title{
+            width: 200px;
+            height: 70px;
+            background: greenyellow;
+        }
+    </style>
+</head>
+<body  class="layui-layout-body">
+<div class="layui-layout layui-layout-admin">
+
+    <div class="layui-side layui-bg-black">
+       <!-- <div class="title">
+
+        </div>-->
+        <div class="layui-side-scroll">
+            <!-- 左侧导航区域（可配合layui已有的垂直导航） -->
+            <ul class="layui-nav layui-nav-tree"  lay-filter="chapter">
+                @var bigfor = 0;
+                @var smfor = 0;
+                @var firstUrl;
+                @for(chapter in session.thisCurrChapter){
+                    @if(chapter.pid ==0){
+                         <li class="layui-nav-item layui-nav-itemed">
+                             <a class="" href="javascript:;">${chapter.cha_name}</a>
+                             <dl class="layui-nav-child">
+                             @for(chapter1 in session.thisCurrChapter){
+                                 @if(chapter1.pid ==chapter.id){
+                                    @if(smfor == 0 && bigfor==0){
+                                         <dd class="layui-this"><a id="fst_video" href="javascript:;" name="${chapter1.url}">${chapter1.cha_name}</a></dd>
+                                        @firstUrl = chapter1.url;
+                                    @}else{
+                                         <dd><a href="javascript:;" name="${chapter1.url}">${chapter1.cha_name}</a></dd>
+                                    @}
+                                 @smfor++;
+                                @}
+
+                             @}
+                             </dl>
+                         </li>
+                         @bigfor++;
+                    @}
+
+                @}
+               <!-- <li class="layui-nav-item layui-nav-itemed">
+                    <a class="" href="javascript:;">所有商品</a>
+                    <dl class="layui-nav-child">
+                        <dd><a href="javascript:;">列表一</a></dd>
+                        <dd><a href="javascript:;">列表二</a></dd>
+                        <dd><a href="javascript:;">列表三</a></dd>
+                        <dd><a href="">超链接</a></dd>
+                    </dl>
+                </li>
+                <li class="layui-nav-item">
+                    <a href="javascript:;">解决方案</a>
+                    <dl class="layui-nav-child">
+                        <dd><a href="javascript:;">列表一</a></dd>
+                        <dd><a href="javascript:;">列表二</a></dd>
+                        <dd><a href="">超链接</a></dd>
+                    </dl>
+                </li>
+                <li class="layui-nav-item"><a href="">云市场</a></li>
+                <li class="layui-nav-item"><a href="">发布商品</a></li>-->
+            </ul>
+        </div>
+    </div>
+
+    <!--controls="controls"-->
+    <div class="layui-body">
+        <video id="video"  class="learn_video" autoplay="autoplay">
+            你的浏览器貌似不支持video 元素 %>_<%
+
+          <source src="/resources${firstUrl}" type="video/mp4">
+
+        </video>
+    </div>
+
+</div>
+<script>
+    //JavaScript代码区域
+    layui.use(['element','layer','jquery'], function(){
+        var element = layui.element,
+        layer = layui.layer,
+        $ = layui.jquery;
+        var timeDisplay;
+
+        var addLearnTime = function(){
+            $.ajax({
+                type : "post",
+                url : '/user/addLearnTime',//目标地址
+                data:{time:timeDisplay},
+                success : function() {
+                    timeDisplay=0;
+                }
+            });
+        };
+
+        var video = $("#video");
+        video.get(0).addEventListener("ended",function(){
+            addLearnTime();
+        },false);
+
+        //当页面关闭时执行ajax方法
+        window.addEventListener("beforeunload", function(event){
+            if(timeDisplay>60){
+                addLearnTime();
+            }
+            event.returnValue = '';
+
+        }, false);
+
+
+        //监听页面的最小化或者隐藏
+        document.addEventListener("visibilitychange", function() {
+           var visibilty =  document.visibilityState ;
+          if(visibilty == "hidden"){
+              $("#video").trigger('pause');
+          }else if(visibilty == "visible"){
+              $("#video").trigger('play');
+          }
+        });
+
+        //禁用键盘的 左右方向键以及空格键
+        $(document).keydown(function(event){
+            var num =event.keyCode;
+            console.log(num);
+          if(num ==37 || num ==39 || num == 32){
+              return false;
+          }
+        });
+
+        //禁用鼠标右键
+        $(document).bind("contextmenu",function(e){ //在这里书写代码，构建个性右键化菜单 //取消默认的右键菜单
+
+            return false;
+
+        });
+
+
+        //每当video元素进度条变化时记录当前进度的秒数
+        $("#video").on("timeupdate",function () {
+
+            //用秒数来显示当前播放进度
+            timeDisplay = Math.floor(this.currentTime);
+        });
+
+
+
+
+        setInterval(function() {
+                $.ajax({
+                    type:'post',
+                    url:'/user/addPopularity',
+                    data:{
+                        curr_id:"${session.this_currId}"
+                    }
+                });
+        },1000*60*30);  /*设置每过30min 为课程和教师增加1热度*/
+
+
+
+
+
+        //监听导航点击
+        element.on('nav(chapter)', function(elem){
+           var url = elem.prop("name");
+           $.ajax({  //清空上一个视频存在session中的观看时长
+               type:'post',
+               url:'/user/delOneVideoLearnTime',
+               success:function () {
+                   if(timeDisplay>60){
+                       addLearnTime();
+                   }
+                   $("#video").prop("src","/resources"+url);
+               }
+           });
+
+
+
+
+        });
+
+    });
+</script>
+</body>
+</html>

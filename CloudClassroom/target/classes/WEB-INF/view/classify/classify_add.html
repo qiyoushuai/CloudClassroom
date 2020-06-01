@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="../static/layui/layui.js"></script>
+    <link rel="stylesheet" href="../static/layui/css/layui.css">
+    <style>
+        .layui-table tbody tr:hover{
+            background-color: transparent;
+        }
+        .elements{
+            top: 10px;
+        }
+    </style>
+</head>
+<body>
+<div class="elements" style="width: 80%; position: absolute;left: 10%">
+    <form class="layui-form " action="">
+        <table class="layui-table" lay-size="sm">
+            <tr>
+                <td width="35%">
+                    <p align="right" style="font-size: 14px">课程类别编号</p>
+                </td>
+                <td  width="65%"><input type="text" name="classify_id" disabled class="layui-input" ></td>
+
+            </tr>
+            <tr>
+                <td  width="35%">
+
+                    <p align="right"  style="font-size: 14px">操作人员编号</p>
+                </td>
+                <td width="65%">
+
+                    <input type="text" name="user_id" autocomplete="off" value="${session.user_id}" class="layui-input" disabled>
+                </td>
+            </tr>
+            <tr>
+                <td  width="35%">
+
+
+                    <p align="right" style="font-size: 14px">类别名称</p>
+                </td>
+                <td width="65%">
+                    <input type="text" name="classify_name" class="layui-input" lay-verify="required" placeholder="请输入课程类别名称">
+                </td>
+            </tr>
+        </table>
+
+        <div align="center">
+            <button class="layui-btn" lay-submit lay-filter="submit">立即提交</button>
+            <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+        </div>
+
+    </form>
+</div>
+
+
+
+
+<script>
+    layui.use(['form', 'layedit', 'laydate'], function(){
+        var form = layui.form
+            ,$ = layui.jquery
+            ,layer = layui.layer
+            ,layedit = layui.layedit
+            ,laydate = layui.laydate;
+
+        $.ajax({
+            url:"/curr/getMaxClassify",
+            type: 'post',
+            success:function (data) {
+                $("[name=classify_id]").val(data);
+            },
+            error:function (data) {
+                parent.parent.layer.msg("服务器错误",{icon:2})
+            }
+        });
+
+
+
+
+        //监听提交
+        form.on('submit(submit)', function(data){
+            var data1 = data.field;
+            var classify_id =data1.classify_id;
+            var  user_id =data1.user_id;
+            var  classify_name =data1.classify_name;
+            $.ajax({
+                type: 'post',
+                url: '/curr/classify_add',
+                data: {
+                    id: classify_id,
+                    add_user: user_id,
+                    classify_name: classify_name
+                },
+                success: function (data) {
+                    if(data == "添加成功"){
+                        parent.parent.layer.msg(data,{icon:1});
+                        var index = parent.layer.getFrameIndex(window.name); //先得到当前iframe层的索引
+                        parent.layer.close(index); //再执行关闭
+
+                    }else if(data == "添加失败"){
+                        parent.parent.layer.msg(data,{icon:2});
+                    }
+
+                },
+                error:function () {
+                    layer.msg("服务器错误",{icon:2})
+                }
+            });
+            return false;
+        });
+
+
+
+
+    });
+</script>
+</body>
+</html>

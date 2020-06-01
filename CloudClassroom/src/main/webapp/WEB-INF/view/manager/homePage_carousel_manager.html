@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>网站首页轮播内容管理</title>
+    <script src="../../../static/layui/layui.js"></script>
+    <link rel="stylesheet" href="../../../static/layui/css/layui.css">
+    <style>
+        .layui-icon-add-1{
+            position: relative;
+            top: 1px;
+        }
+        .add_carousel{
+            margin-left: 20px;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+<div>
+    <div>
+        <blockquote class="layui-elem-quote">网站轮播管理</blockquote>
+    </div>
+    <div>
+        <button class="layui-btn add_carousel" name="fromCurr">
+            <i class="layui-icon layui-icon-add-1"></i>选择课程添加轮播图
+        </button>
+        <button class="layui-btn add_carousel" name="custom">
+            <i class="layui-icon layui-icon-add-1"></i>自定义轮播图
+        </button>
+    </div>
+
+    <div>
+        <table id="carousel" lay-filter="carousel"></table>
+    </div>
+
+</div>
+
+
+<script type="text/html" id="urlTemp">
+   <a href="{{ d.url }}" target="_blank" class="layui-table-link">{{d.url}}</a>
+</script>
+
+<script type="text/html" id="imgTemp">
+    <a href="javascript:"  class="layui-table-link"><i class="layui-icon layui-icon-search"></i>点击查看图片</a>
+</script>
+
+
+<script>
+    //JavaScript代码区域
+    layui.use(['element','layer','table'], function() {
+            var element = layui.element,
+                layer = layui.layer,
+                $ = layui.jquery,
+                table = layui.table;
+        var count1;
+
+        //第一个实例
+        table.render({
+            elem: '#carousel'
+            ,id:'carousel'
+            ,height: 312
+            ,url: '/curr/getCarouselList' //数据接口
+            ,cols: [[ //表头
+                {type:'numbers'}
+               /* {field: 'id', title: 'ID', width:80, sort: true, fixed: 'left'}*/
+                ,{field: 'title', title: '标题', width:236}
+                ,{field: 'message', title: '内容', width:407}
+                ,{field: 'url', title: '跳转页面', width:267 ,templet:"#urlTemp"}
+                ,{field: 'img_url', title: '展示图片', width: 237, templet: "#imgTemp",  style:'cursor: pointer;', event: 'seeImg'}
+                ,{title:'操作', toolbar: '#barDemo', width:142}
+            ]]
+            ,done: function(res, curr, count){
+               count1 = count;
+            }
+        });
+
+        $(".add_carousel").click(function () {
+            if(count1>4){
+                parent.layer.alert("首页轮播内容数量不可超过五条",{title:false});
+                return;
+            }
+            var type = $(this).prop("name");
+            if(type === 'custom'){
+                //自定页
+                parent.layer.open({
+                    title: "添加网站首页轮播内容",
+                    type: 2,
+                    skin: 'layui-layer-demo', //样式类名
+                    area: ['450px', '550px'],
+                    closeBtn: 0, //不显示关闭按钮
+                    fixed: true,
+                    move: false,
+                    anim: 2,
+                    shadeClose: true, //开启遮罩关闭
+                    content: '/page/addCarousel'
+                });
+            }else if(type === 'fromCurr'){
+                //自定页
+                parent.layer.open({
+                    title: "从课程中选择添加轮播内容",
+                    type: 2,
+                    skin: 'layui-layer-demo', //样式类名
+                    area: ['450px', '550px'],
+                    closeBtn: 0, //不显示关闭按钮
+                    fixed: true,
+                    move: false,
+                    anim: 2,
+                    shadeClose: true, //开启遮罩关闭
+                    content: '/page/chooseCurrToCarousel'
+                });
+            }
+        });
+
+
+
+
+
+
+        //监听工具条
+        table.on('tool(carousel)', function(obj){ //注：tool 是工具条事件名，test 是 table 原始容器的属性 lay-filter="对应的值"
+            var data = obj.data; //获得当前行数据
+            var layEvent = obj.event; //获得 lay-event 对应的值（也可以是表头的 event 参数对应的值）
+            var tr = obj.tr; //获得当前行 tr 的 DOM 对象（如果有的话）
+            if(layEvent === 'del'){
+                parent.layer.confirm("您确定要删除本条轮播内容嘛",function (index) {
+                    $.ajax({
+                        type:'post',
+                        url:'/curr/delCarousel',
+                        data:{id:data.id},
+                        success:function (data) {
+                            if(data ==="删除成功"){
+                                parent.layer.msg(data,{icon:1});
+                                table.reload('carousel');
+                            }else {
+                                parent.layer.msg(data,{icon:2});
+                            }
+                        },
+                        error:function () {
+                            parent.layer.msg("系统错误",{icon:2})
+                        }
+                    });
+                    parent.layer.close(index);
+                });
+            }else if(layEvent === 'seeImg'){
+                parent.layer.open({
+                    type: 1,
+                    title: false,
+                    shade:0.7,
+                    closeBtn: 0,
+                    area: ['auto'],
+                    skin: 'layui-layer-nobg', //没有背景色
+                    shadeClose: true,
+                    content: '<img src="'+data.img_url+'" style="width: 1100px;height: 550px">',
+                    success: function(layero, index){
+                        layero.click(function () {
+                            parent.layer.close(index);
+                        })
+                    }
+                });
+            }
+        });
+
+
+
+        })
+</script>
+
+<script type="text/html" id="barDemo">
+    <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+</script>
+</body>
+</html>

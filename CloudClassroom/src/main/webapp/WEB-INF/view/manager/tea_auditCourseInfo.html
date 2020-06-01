@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>教师开课申请信息</title>
+    <script src="../static/layui/layui.js"></script>
+    <link rel="stylesheet" href="../static/layui/css/layui.css">
+</head>
+<style>
+    .layui-table tbody tr:hover{
+        background-color: transparent;
+    }
+    .layui-input{
+        height: 30px !important;
+    }
+    .layui-btn-sm{
+        height: 25px !important;
+        line-height: 25px !important;
+    }
+    #cer_title{
+        font-size: 14px;
+        width: 150px;
+        position: relative;
+        left: 35px;
+        top: 5px;
+        color: #666666;
+    }
+    .tool{
+        position: absolute;
+        left: 100px;
+        top: 7.4px;
+    }
+</style>
+<body>
+<div style="width: 100%;height: 40px;background: #e6e6e6">
+    <div class="tool">
+        <button name="get_pass" class="layui-btn layui-btn-sm  user_lock">通过审核</button>
+        <button name="not_pass" class="layui-btn layui-btn-sm layui-btn-danger user_lock">不通过审核</button>
+    </div>
+</div>
+<div>
+    <form class="layui-form layui-form-pane" action="">
+        <table class="layui-table " lay-skin="nob" lay-size="sm">
+            <tr>
+                <td width="10%">
+                    <p align="right" style="font-size: 14px">申请编号</p>
+                </td>
+                <td  width="20%"><input type="text" name="id" disabled class="layui-input" value='${curriculum.id}' disabled></td>
+                <td  width="10%">
+
+                    <p align="right"  style="font-size: 14px">教师ID</p>
+                </td>
+                <td width="20%">
+
+                    <input type="text" name="tea_id" autocomplete="off" value="${curriculum.tea_id}" class="layui-input" disabled>
+                </td>
+                <td  width="10%">
+
+                    <p align="right"  style="font-size: 14px">课程名称</p>
+                </td>
+                <td width="20%">
+
+                    <input type="text" name="c_name" autocomplete="off" value="${curriculum.c_name}" class="layui-input" disabled>
+                </td>
+            </tr>
+            <tr>
+                <td  width="10%">
+
+                    <p align="right"  style="font-size: 14px">教师姓名</p>
+                </td>
+                <td width="20%">
+
+                    <input type="text" name="tea_relname" autocomplete="off" value="${curriculum.tea_relname}" class="layui-input" disabled>
+                </td>
+                <td  width="10%">
+
+                    <p align="right"  style="font-size: 14px">分类(主)</p>
+                </td>
+                <td width="20%">
+                    <input type="text" name="classify" autocomplete="off" value="${curriculum.classify}" class="layui-input" disabled>
+                </td>
+                <td  width="10%">
+
+                    <p align="right"  style="font-size: 14px">详细分类</p>
+                </td>
+                <td width="20%">
+
+                    <input type="text" name="classify_child" autocomplete="off" value="${curriculum.classify_child}" class="layui-input" disabled>
+                </td>
+            </tr>
+            <tr>
+                <td  width="10%">
+
+                    <p align="right"  style="font-size: 14px">是否收费</p>
+                </td>
+                <td width="20%">
+                    @if(curriculum.charge == 1 ){
+                    <input type="text" name="charge" autocomplete="off" value="收费" class="layui-input" disabled>
+                    @}else{
+                    <input type="text" name="charge" autocomplete="off" value="免费" class="layui-input" disabled>
+                    @}
+                </td>
+                <td  width="10%">
+
+                    <p align="right"  style="font-size: 14px">价格</p>
+                </td>
+                <td colspan="3">
+
+                    <input type="text" name="userid" autocomplete="off" value="${curriculum.price}" class="layui-input" disabled>
+                </td>
+            </tr>
+            <tr>
+                <td  width="10%">
+
+                    <p align="right"  style="font-size: 14px">申请日期</p>
+                </td>
+                <td width="20%">
+
+                    <input type="text" name="userid" autocomplete="off" value="${curriculum.add_date}" class="layui-input" disabled>
+                </td>
+                <td  width="10%">
+
+
+                </td>
+                <td width="20%">
+
+                </td>
+                <td  width="10%">
+
+
+                </td>
+                <td width="20%">
+
+                </td>
+            </tr>
+
+            <tr>
+                <td width="10%">
+                    <p align="right"  style="font-size: 14px">课程简介</p>
+                </td>
+                <td colspan="5">
+                    <textarea  class="layui-textarea" style="width: 400px;height: 100px" disabled>${curriculum.c_describe}</textarea>
+                </td>
+            </tr>
+        </table>
+
+    </form>
+</div>
+<div style="width: 100%;height: 30px;background: #e6e6e6">
+    <p id="cer_title" >相关专业证书</p>
+</div>
+<div style="width: 96%;position: absolute;left: 2%">
+    <table id="certificate" lay-filter="certificate"></table>
+</div>
+<script>
+    layui.use(['form','layer','table'], function(){
+        var layer = layui.layer
+            ,table = layui.table
+            ,$ = layui.jquery;
+        $(".user_lock").click(function () {
+            var state = $(this).prop("name");
+            var type = null;
+            if(state == 'get_pass'){type = ''}else if(state == 'not_pass'){type = '不'}
+            layer.confirm("确定"+type+"通过此用户的课程申请吗",function (index) {
+
+                $.ajax({
+                    type: 'post',
+                    url: '/curr/approval_currApply',
+                    data:{
+                        state:state,
+                        curriculum_id:'${curriculum.id}',
+                        tea_id:"${curriculum.tea_id}",
+                        apply_date:"${curriculum.add_date}",
+                        c_name:"${curriculum.c_name}"
+
+                    },
+                    success:function (data) {
+                        parent.parent.layer.msg(data);
+                        parent.frames["tea_auditCourse"].location.reload();
+                    },
+                    error:function (data) {
+                        parent.parent.layer.msg("服务器错误",{icon:2});
+
+                    }
+                });
+                layer.close(index);
+            });
+
+        });
+        table.render({
+            id: 'certificate'
+            ,elem: '#certificate'
+            ,height: 250
+            ,url: '/curr/getPCLLCertificate_url?curriculum_id=${curriculum.id}' //数据接口
+            ,page: true //开启分页
+            ,limit:4
+            ,limits:[4,8,12,16]
+            ,cols: [[ //表头
+                {field: 'id', title: '证书编号', width:155, sort: true, fixed: 'left',   style:'cursor: pointer;'}
+                ,{field: 'cer_name', title: '证书名',   style:'cursor: pointer;'}
+            ]]
+
+        });
+
+
+        //监听行单击事件（双击事件为：rowDouble）
+        table.on('row(certificate)', function(obj){
+            var data = obj.data;
+            //页面层-图片
+
+            parent.layer.open({
+                type: 1,
+                title: false,
+                shade:0.7,
+                closeBtn: 0,
+                area: ['auto'],
+                skin: 'layui-layer-nobg', //没有背景色
+                shadeClose: true,
+                content: '<img src="/resources/certificate/'+data.url+'" style="width: 900px;height: 600px">',
+                success: function(layero, index){
+                    layero.click(function () {
+                        parent.layer.close(index);
+                    })
+                }
+            });
+            //标注选中样式
+            obj.tr.addClass('layui-table-click').siblings().removeClass('layui-table-click');
+        });
+    })
+</script>
+</body>
+</html>

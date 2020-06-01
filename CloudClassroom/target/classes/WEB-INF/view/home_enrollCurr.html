@@ -1,0 +1,887 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>智慧云学堂</title>
+    <script src="../static/layui/layui.js" type="text/javascript"></script>
+    <link href="../static/layui/css/layui.css" rel="stylesheet">
+    <style>
+        html{
+            overflow-y: auto;
+        }
+        .layui-tab-title{
+            background-color: #fafafa !important;
+        }
+        .curr_introduce{
+            height: 300px;
+            width: 1215.35px;
+            margin: 40px 0px 20px 0px;
+        }
+        .curr_introduce .cover{
+            height: 300px;
+            width: 550px;
+        }
+        .content_page {
+            position: relative;
+            width: 80%;
+            left: 10%;
+            background: white;
+        }
+        .padding_left_right{
+            padding: 10px 0  !important;
+        }
+        .layui-layout-admin .layui-footer{
+            left: 0px !important;
+            position: relative !important;
+            margin-top: 40px;
+        }
+        .layui-layout-admin .layui-logo{
+            color: white !important;
+        }
+        .margin_top_twenty{
+            margin-top: 20px;
+        }
+        .margin_buttom_ten{
+            margin-bottom: 10px;
+        }
+        .curr_info{
+
+            width: 1215.35px;
+        }
+        #paging{
+            text-align: center;
+        }
+        .margin_buttom_ten.content {
+            max-width: 1156px;
+        }
+        .title{
+            width: 1215.35px;
+            height: 40px;
+            line-height: 40px;
+            margin-bottom: 30px;
+        }
+         .title p{
+            font-size: 22px;
+            font-weight: 300;
+        }
+         .title img{
+            width: 30px;
+            height: 30px;
+
+        }
+        .curr_info .info_content{
+            width: 1215.35px;
+        }
+        .info{
+            width: 641px;
+            height: 300px;
+            padding: 0px 0px 0px 20px;
+        }
+        .info .curr_name{
+            font-size: 26px;
+            font-family: fantasy;
+            width: 641px;
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+        }
+        .joinClass{
+            position: absolute;
+            bottom: 0px;
+        }
+        .price{
+            font-size: 28px;
+            font-family: auto;
+            font-weight: 300;
+            position: absolute;
+            top: 80px;
+            left: 15px;
+        }
+        .price_none{
+            position: absolute;
+            top: 80px;
+            left: 15px;
+            width: 40px;
+            height: 40px;
+        }
+        .starts{
+            position: absolute;
+            left: 1040px;
+        }
+        .free{
+            position: absolute;
+            left: 62px;
+            top: 88px;
+            font-size: 16px;
+            color: gray;
+        }
+        .comment_card{
+            margin: 20px 0;
+        }
+        .comment_card .purikura{
+            height: 40px;
+            width: 40px;
+            margin-right: 15px;
+        }
+        .comment_card .img_top{
+            vertical-align: top;
+        }
+        .comment_card .user{
+            width: fit-content;
+            width: -moz-fit-content;
+            display: inline;
+        }
+        .comment_card .name{
+            display: inline;
+            width: fit-content;
+            width: -moz-fit-content;
+            color: #eb7350;
+        }
+        .comment_card .time{
+            color: #8D8D8D;
+        }
+        .content p:first-of-type{
+            display: inline-block;
+        }
+        .rate_list{
+            display: flex;
+            flex-wrap: nowrap;
+            justify-content: space-between;
+            width: 100px;
+        }
+        .rate{
+            color: #FFB800;
+        }
+        .popu_teac{
+            position: absolute;
+            top: 50px;
+        }
+        .popu_teac p{
+            font-size: 12px;
+            color: #666666;
+        }
+        .info_content{
+            font-size: 16px;
+            line-height: 60px;
+        }
+        .color_green{
+            background-color: mediumseagreen !important;
+        }
+
+        .tiling{   /*实现容器内的div左右上下平铺*/
+            -ms-flex-line-pack: justify;
+            align-content: space-between;
+            -ms-flex-wrap: wrap;
+            flex-wrap: wrap;
+            -ms-flex-pack: justify;
+            justify-content: space-between;
+        }
+        .twenty_px{
+            height: 20px;
+        }
+        .ten_px{
+            height: 10px;
+        }
+
+
+        /*控制三级菜单的样式*/
+        .nav-lv3 a {
+            display: inline !important;
+            white-space: nowrap;
+            padding: 5px 10px !important;
+        }
+        .nav-lv3 {
+            z-index: 120;
+            display: none;
+            position: absolute;
+            background: #fff;
+            width: 550px;
+            white-space: normal !important;
+            left: 90px;
+            margin: 0px 0px 0px 19px;
+            top: 0px;
+            border: 1px solid #d2d2d2;
+            padding: 16px;
+            box-shadow: 0 2px 4px rgba(0,0,0,.12);
+        }
+        .layui-nav .layui-this:after{
+           width: 0px !important;
+        }
+
+
+    </style>
+
+</head>
+
+<body class="layui-layout-body">
+<div class="layui-layout layui-layout-admin">
+    <div class="layui-header">
+        <div class="layui-logo" style="cursor: pointer" onclick="location.href='/'">
+            <div class="layui-inline">
+                <i class="layui-icon layui-icon-read" style="font-size: 26px"></i>
+            </div>
+            <div class="layui-inline" >
+                <p style="font-size: 22px">智慧云学堂</p>
+            </div>
+
+        </div>
+        <!-- 头部区域（可配合layui已有的水平导航） -->
+        <ul class="layui-nav layui-layout-left">
+            <li class="layui-nav-item"><a href="/">首页</a></li>
+            <li class="layui-nav-item">
+                <a href="javascript:;">课程分类</a>
+                <dl class="layui-nav-child">
+                    @var haschile = 0;
+                    @for(cla in session.classifies){
+                    @haschile = 0;
+                    @if(cla.field == 1001){
+                    <dd>
+                        <a href="/page/home_queryCurr?classify_id=${cla.id}">${cla.title}</a>
+                        @for(cla1 in session.classifies){if(cla1.field == cla.id){ haschile++; }}
+                        @if(haschile >0){
+                        <div class="nav-lv3 layui-anim layui-anim-fadein">
+                                 <span class="layui-breadcrumb" lay-separator="|">
+                                     @for(cla1 in session.classifies){
+                                      @if(cla1.field == cla.id){
+                                        <a href="/page/home_queryCurr?classify_id=${cla1.id}">${cla1.title}</a>
+                                       @}
+                                  @}
+                                </span>
+                        </div>
+                        @}
+                    </dd>
+                    @}
+                    @}
+
+                </dl>
+            </li>
+
+        </ul>
+        <div style="position: absolute;left: 400px;top: 10px">
+            <form class="layui-form" action="/page/home_queryCurr" method="post">
+                <div class="layui-form-item">
+
+                    <div class="layui-input-block">
+                        <div class="layui-inline">
+                            <input type="text" name="curr_name" required   lay-verify="required" placeholder="搜索课程" autocomplete="off" class="layui-input">
+                        </div>
+                        <div class="layui-inline">
+                            <button type="submit" class="layui-btn layui-btn-radius">
+                                <i class="layui-icon">&#xe615;</i>
+                            </button>
+                        </div>
+
+
+                    </div>
+                </div>
+            </form>
+        </div>
+
+
+        <ul class="layui-nav layui-layout-right">
+
+            @if(session.username != null  && session.username!= ''){
+
+            <li class="layui-nav-item">
+                <a href="javascript:;">
+                    @if(session.pur_url != "" && session.pur_url !=null){
+                    <img src="/resources/${session.pur_url}" class="layui-nav-img">
+                    @}else{
+                    <img src="/resources/purikura/purikura.png" class="layui-nav-img">
+                    @}
+                    @if(session.user_name == null || session.user_name == "" ){
+                    ${session.username}
+                    @}else{
+                    ${session.user_name}
+                    @}
+                </a>
+                <dl class="layui-nav-child">
+                    <dd><a href="/page/homePage_Personal" >个人主页</a></dd>
+                    <dd><a href="/page/personal_information">个人信息</a></dd>
+                    @if(session.user_type == 3){
+                         <dd><a href="/page/teacher_application?id=${session.user_id}">教师资格申请</a></dd>
+                    @}
+                </dl>
+            </li>
+            <li class="layui-nav-item"><a href="/user/logout" >退了</a></li>
+
+            @}else{
+             <li class="layui-nav-item"><a id="login_add" href="#" data-method="login_add">登录/注册</a> </li>
+            @}
+
+        </ul>
+
+
+    </div>
+
+    <div>
+        <!-- 内容主体区域 -->
+        <div>
+            <div class="content_page" >
+                <!--首页轮播图-->
+                <div class="curr_introduce">
+                    <div>
+                        <img class="layui-inline cover" src="/resources${session.curr.cover_url}">
+                        <div class="info layui-inline">
+                            <p class="curr_name" title="${session.curr.c_name}">${session.curr.c_name}</p>
+                            <div class="popu_teac">
+                                <p class="layui-inline">
+                                    讲师：${session.curr.tea_relname}   &emsp;&emsp;&emsp;
+                                </p>
+                                <p class="layui-inline">
+                                    <i class="layui-icon layui-icon-fire" style="font-size: 12px;color: red"></i>
+                                    @if(session.curr.popularity == null){
+                                    0
+                                    @}else{
+                                    ${session.curr.popularity}
+                                    @}
+
+                                </p>
+                            </div>
+                            @if(session.curr.charge == 2){
+
+                            <img class="price_none" src="../static/img/免费.png">
+                            <p class="free">免费课程</p>
+                            @}else{
+                            <p class="price">￥${session.curr.price}</p>
+                            @}
+
+                            <div class="joinClass">
+                                @if(session.isMyCourse){
+
+                                <input id="curr_learning" type="button" class="layui-btn  layui-btn-lg layui-inline color_green" value="开始上课">
+                                <img src="../static/img/已报名.png" class="layui-inline" style="height: 45px;width: 45px">
+                                @}else{
+                                <input id="enrollCurr_btn" type="button" class="layui-btn layui-btn-lg color_green"  value="报名参加">
+                                @}
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+                <div class="layui-tab">
+                    <ul class="layui-tab-title">
+                        <li class="layui-this">课程介绍</li>
+                        <li>学生评论</li>
+
+                    </ul>
+                    <div class="layui-tab-content padding_left_right">
+                        <div class="layui-tab-item layui-show">
+                            <div class="info_content">
+                                ${session.curr.c_describe}
+                            </div>
+                        </div>
+
+
+                        <div class="layui-tab-item">
+
+
+                            <div class="">
+                               @if(session.user_id != null && session.isMyCourse){
+                                <div class="">
+                                    <div id="starts" class="starts"></div>
+                                    <textarea id="comment" style="display: none;"></textarea>
+                                    <div class="ten_px"></div>
+                                    <button class="layui-btn layui-btn-sm layui-btn-warm" id="submitComment">发布</button>
+                                </div>
+                                @}else{
+                                <div class="">
+                                    <p align="center" style="color: #666666;">
+                                        <i class="layui-icon layui-icon-tips"></i>
+                                        登陆并参加课程后可进行评论
+                                    </p>
+                                </div>
+                                @}
+
+                                <div class="twenty_px"></div>
+                                <div class="twenty_px"></div>
+
+                                <div class="title">
+                                    <div class="layui-inline">
+                                        <img src="../static/img/评论.png">
+                                    </div>
+                                    <div class="layui-inline">
+                                        <p>评论区</p>
+                                    </div>
+                                </div>
+
+                                <div class="comment">
+                                  <!--  <div class="comment_card">
+                                        <div class="layui-inline img_top">
+                                            <img class="purikura" src="../static/img/头像.jpeg">
+                                        </div>
+                                        <div class="layui-inline">
+                                            <div class="margin_buttom_ten">
+                                                <p class="name">上官婉</p><p class="user">：</p>
+
+                                                    哈哈哈哈哈！！啊啊啊啊
+
+                                            </div>
+                                            <div class="rate_list">
+                                                <i class="layui-icon layui-icon-rate-solid rate"></i>
+                                                <i class="layui-icon layui-icon-rate-solid rate"></i>
+                                                <i class="layui-icon layui-icon-rate-solid rate"></i>
+                                                <i class="layui-icon layui-icon-rate-solid rate"></i>
+                                                <i class="layui-icon layui-icon-rate rate"></i>
+                                            </div>
+                                            <p class="time">11:45</p>
+                                        </div>
+                                    </div>
+-->
+
+
+
+                                </div>
+                                <div id="paging"></div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+
+
+
+
+
+        <!--        <div class="curr_info">
+                    <div class="title">
+                        <div class="layui-inline">
+                            <img src="../static/img/简介.png">
+                        </div>
+                        <div class="layui-inline">
+                            <p>课程简介</p>
+                        </div>
+                    </div>
+                    <div class="info_content">
+                        ${session.curr.c_describe}
+                    </div>
+                </div>
+
+
+
+         &lt;!&ndash;       <div class="curr_info">
+                    <div class="title">
+                        <div class="layui-inline">
+                            <img src="../static/img/简介.png">
+                        </div>
+                        <div class="layui-inline">
+                            <p>评论区</p>
+                        </div>
+                    </div>
+                    <div class="info_content">
+                        ${session.curr.c_describe}
+                    </div>
+                </div>&ndash;&gt;
+                <div class="twenty_px"></div>
+                <div class="twenty_px"></div>
+                <div class="curr_info">
+                    <div class="title">
+                        <div class="layui-inline">
+                            <img src="../static/img/写评论.png">
+                        </div>
+                        <div class="layui-inline">
+                            <p>发表评论</p>
+                        </div>
+                    </div>
+                    <div class="">
+                        <textarea id="comment" style="display: none;"></textarea>
+                        <div class="ten_px"></div>
+                        <button class="layui-btn layui-btn-sm layui-btn-primary" id="submitComment">发布</button>
+                    </div>
+                </div>
+
+
+
+                <div class="twenty_px"></div>
+                <div class="twenty_px"></div>
+                <div class="curr_info">
+                    <div class="title">
+                        <div class="layui-inline">
+                            <img src="../static/img/评论.png">
+                        </div>
+                        <div class="layui-inline">
+                            <p>评论区</p>
+                        </div>
+                    </div>
+                    <div class="">
+
+
+
+                    </div>
+                </div>
+                <div class="twenty_px"></div>
+                <div class="twenty_px"></div>
+-->
+
+            </div>
+        </div>
+    </div>
+
+
+</div>
+<script>
+    //JavaScript代码区域
+    layui.use(['element','layer','carousel','util','layedit','rate','laypage'], function(){
+        var element = layui.element,
+        layer = layui.layer,
+        $ = layui.jquery,
+            carousel = layui.carousel,
+            util = layui.util,
+            layedit = layui.layedit,
+        rate = layui.rate,
+        laypage=layui.laypage;
+        var curr_state = "${session.curr.state}";
+         var evaluate = 0;
+
+         var limit = 5;
+         var page = 1;
+         var isPage = false;
+
+
+
+        //执行一个laypage实例
+        function paging(count){
+            laypage.render({
+                elem: 'paging' //注意，这里的 test1 是 ID，不用加 # 号
+                ,count: count //数据总数，从服务端得到
+                ,limit:limit
+                ,limits:[5,10,15,20]
+                ,layout:['count','prev','page','next','limit','refresh','skip']
+                ,jump: function(obj, first){
+                    //obj包含了当前分页的所有参数，比如：
+                    page = obj.curr; //得到当前页，以便向服务端请求对应页的数据。
+                    limit = obj.limit; //得到每页显示的条数
+
+                    //首次不执行
+                    if(!first){
+                        getComment(page,limit);
+                    }
+                }
+            });
+        }
+
+
+
+         //获取课程评论并将评论显示在页面中
+        var getComment = function (page,limit) {
+            var curr_id = "${session.curr.id}";
+            $.ajax({
+                type:'post',
+                url:'/curr/getComment',
+                data:{
+                    curr_id:curr_id,
+                    page:page,
+                    limit:limit
+                },
+                success:function (data) {
+                    var comment = $(".comment");
+                    comment.empty();
+                    if(data.list != null && data.list.length>0){
+                        for(var x=0;x<data.list.length;x++){
+                            var rate = "";
+                            for(var i=0 ;i<data.list[x].evaluate;i++){
+                                rate +=  "                                                <i class=\"layui-icon layui-icon-rate-solid rate\"></i>\n"
+                            }
+                            for(var j=0; j<5-data.list[x].evaluate;j++){
+                                rate += "                                                <i class=\"layui-icon layui-icon-rate rate\"></i>\n"
+                            }
+
+                            var html = " <div class=\"comment_card\">\n" +
+                                "                                        <div class=\"layui-inline img_top\">\n" +
+                                "                                            <img class=\"purikura layui-circle\" src=\"/resources"+data.list[x].purikura+"\">\n" +
+                                "                                        </div>\n" +
+                                "                                        <div class=\"layui-inline\">\n" +
+                                "                                            <div class=\"margin_buttom_ten content\">\n" +
+                                "                                                <span class=\"name\">"+data.list[x].name+"</span><span class=\"user\">：</span><br>\n" +
+                                "\n" +
+                                data.list[x].context +
+                                "\n" +
+                                "                                            </div>\n" +
+                                "                                            <div class=\"rate_list\">\n" + rate
+                                +
+                                "                                            </div>\n" +
+                                "                                            <p class=\"time\">"+data.list[x].date+"</p>\n" +
+                                "                                        </div>\n" +
+                                "                                    </div>\n"+
+                                 "<hr>";
+
+                            comment.append(html);
+                        }
+
+                        if(!isPage){
+                            paging(data.count);
+                        }
+                        isPage = true;
+
+                    }else{
+                        var nocomment = " <div class=\"\">\n" +
+                            "                                    <p align=\"center\" style=\"color: #d0d0d0;font-size: 22px;font-width: 100;\">\n" +
+                            "                                       <img src='../static/img/暂无评论.png' style='width: 80px;height: 80px'>\n" +
+                            "                                        暂无评论\n" +
+                            "                                    </p>\n" +
+                            "                                </div>";
+                        comment.append(nocomment);
+                    }
+                },
+                error:function () {
+
+                }
+            })
+        };
+
+        getComment(page,limit);
+
+
+
+
+
+
+
+
+        //评定星级
+      rate.render({
+            elem: '#starts'
+            ,value: 0
+            ,text: true
+            ,setText: function(value){ //自定义文本的回调
+                var arrs = {
+                    '0':'评价'
+                    ,'1': '极差'
+                    ,'2': '差'
+                    ,'3': '中等'
+                    ,'4': '好'
+                    ,'5': '极好'
+                };
+                this.span.text(arrs[value] || ( value + "星"));
+            }
+            ,choose: function(value){
+                evaluate = value;
+            }
+        });
+
+
+
+        //富文本编辑器
+       var comment = layedit.build('comment',{
+           tool: [
+               'strong' //加粗
+               ,'italic' //斜体
+               ,'underline' //下划线
+               ,'del' //删除线
+               ,'|' //分割线
+               ,'face' //表情
+           ],
+           height:100
+       });
+
+       //判断是否为空或空格
+        function isNull( str ){
+            if(str == null){return  true;}
+            if ( str == "" ){return true;}
+
+            return str.replace(/\s/g,"")=="";
+        }
+
+
+        //提交评论
+       $("#submitComment").click(function () {
+           var html = layedit.getContent(comment);
+           var text =layedit.getText(comment);
+           var reg = /\/static\/layui\/images\/face\//;
+           var curr_id = "${session.curr.id}";
+           var user_id = "${session.user_id}";
+           if(user_id == null || user_id === ""){
+               active["login_add"].call(this);
+               return;
+           }
+           if(isNull(text) && !reg.test(html)){
+               layer.msg("请输入评价内容");
+               return;
+           }
+           if(evaluate === 0){
+               layer.msg("请选择评价星级");
+               return;
+           }
+           $.ajax({
+               type:'post',
+               url:'/curr/currComment',
+               data:{
+                   curr_id:curr_id,
+                   user_id:user_id,
+                   context:html,
+                   evaluate:evaluate
+               },
+               success:function (data) {
+                   if(data == "发布成功"){
+                       $('#LAY_layedit_1').contents().find('body').html('');
+                       getComment(1,limit);
+                   }
+                   layer.msg(data);
+               },
+               error:function () {
+                   layer.msg("服务器错误",{icon:2});
+               }
+           })
+       });
+
+
+        //展示评论
+
+       
+       
+
+        $("#curr_learning").click(function () {
+            if(curr_state != 4){
+                layer.msg("此课程目前为停课状态，无法进行学习。");
+                return;
+            }
+           window.open("/page/curr_learning?curr_id=${session.curr.id}");
+        });
+
+
+        $("#enrollCurr_btn").click(function () {
+            if(curr_state != 4){
+                layer.msg("此课程目前为停课状态，请返回首页并刷新页面。");
+                return;
+            }
+            if("${session.user_type}"==1){
+                layer.alert("管理员暂未开启选课功能");
+                return;
+            }
+            if("${session.curr.tea_id}" === "${session.user_id}"){
+                parent.layer.alert("抱歉，您不可参加自己开设的课程",{title:false,closeBtn:0});
+                return;
+            }
+            if("${session.user_id}" == null || "${session.user_id}" === ""){
+                active["login_add"].call(this);
+                return;
+            }
+            var charge = "${session.curr.charge}";
+            if(charge == 2){
+                $.ajax({
+                    type:'post',
+                    url:'/user/enrollCurr',
+                    data:{
+                        user_id:"${session.user_id}",
+                        curr_id:"${session.curr.id}"
+                    },
+                    success:function (data) {
+                        layer.msg(data,function () {
+                            location.reload();
+                        });
+
+                    },
+                    error:function () {
+                        layer.msg("系统错误",{icon:2})
+                    }
+                })
+            }else{
+               layer.open({
+                   title: "课程购买",
+                   type: 1,
+                   skin: 'layui-layer-demo', //样式类名
+                   area: ['680px', '350px'],
+                   closeBtn: 0, //不显示关闭按钮
+                   fixed: true,
+                   move: false,
+                   anim: 2,
+                   shadeClose: true, //开启遮罩关闭
+                   content: '<iframe frameborder="no" style="height: 303px;width: 100%;" scrolling="auto" src="/page/buy_curr?curr_id=${session.curr.id}">'
+               })
+            }
+        });
+
+
+
+
+
+
+
+        //讲课程简介div快中所有文本中的句号 换为 回车
+     var content_div = $(".info_content");
+     var content = content_div.html();
+     content_div.html(content.replace(/。/g,"<br>"));
+
+
+
+
+
+        //执行
+        util.fixbar({
+            bar1: false
+            ,click: function(type){
+                console.log(type);
+                if(type === 'bar1'){
+                    alert('点击了bar1')
+                }
+            }
+        });
+
+
+
+        var active ={
+            login_add:function(){
+                //自定页
+                layer.open({
+                    title: false,
+                    type: 1,
+                    skin: 'layui-layer-demo', //样式类名
+                    area: ['450px', '480px'],
+                    closeBtn: 1, //不显示关闭按钮
+                    fixed: true,
+                    move: false,
+                    anim: 2,
+                    shadeClose: true, //开启遮罩关闭
+                    content: '<iframe frameborder="no" style="height: 470px;width: 100%;" scrolling="auto" src="/page/login_add">'
+                });
+            }
+
+        };
+
+
+        $('#login_add').on('click', function(){
+            var othis = $(this), method = othis.data('method');
+            active[method] ? active[method].call(this, othis) : '';
+        });
+
+
+
+        /*=======================================================*/
+        //控制三级菜单的显示与隐藏
+        var none;
+        $(".nav-lv3").hover(function () {
+            clearTimeout(none);
+            $(this).css("display","block");
+        },function () {
+            clearTimeout(none);
+            $(this).css("display","none");
+        });
+        $(".layui-nav-child dd").hover(function () {
+            clearTimeout(none);
+            $(this).siblings().find(".nav-lv3").css("display","none");
+            $(this).find('.nav-lv3').css("display","block");
+        },function () {
+            var $this = $(this);
+            none = setTimeout(function (){$this.find(".nav-lv3").css("display","none")},300)
+        });
+        /*============================================================*/
+
+    });
+</script>
+</body>
+
+<!--<body>
+<form action="/upload" method="post" enctype="multipart/form-data">
+    用户名：<input type="text" name="username"><br>
+    密码：<input type="text" name="pswd"><br>
+    文件名：<input type="file" name="file"><br>
+    <input type="submit" value="上传">
+</form>
+
+
+
+</body>-->
+</html>

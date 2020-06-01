@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sdjt.classroom.dao.ResourcesMapper">
+
+    <!--如果要映射的表中有double类型的数据。一定要指明jdbcType 和javaType -->
+  <!--  <resultMap id="pcMap" type="Pc">
+        <id column="pcid" property="pcid"></id>
+        <result column="pcname" property="pcname"></result>
+        <result column="pcdate" property="pcdate" ></result>
+        <result column="userid" property="userid"></result>
+        <result column="saleid" property="saleid"></result>
+        <result column="supplierid" property="supplierid"></result>
+        <result column="auditstatus" property="auditstatus"></result>
+        <result column="pcprice" property="pcprice" jdbcType="DOUBLE" javaType="DOUBLE"></result>
+        <result column="reason" property="reason"></result>
+    </resultMap>-->
+<select id="getCertificateMaxNo" resultType="java.lang.Integer">
+    select Max(id) from certificate
+</select>
+    <insert id="insert_Certificate" parameterType="com.sdjt.classroom.model.Certificate">
+        insert into certificate (id,TEFL,diploma) values (#{id},#{TEFL},#{diploma})
+    </insert>
+</mapper>

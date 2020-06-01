@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>回复消息页面</title>
+    <script src="../../../static/layui/layui.js"></script>
+    <link rel="stylesheet" href="../../../static/layui/css/layui.css">
+    <style>
+        .send{
+            position: absolute;
+            left: 580px;
+            top: 4px;
+        }
+        .input{
+            width: 450px;
+        }
+        .layui-elem-quote{
+            padding: 0 15px !important;
+        }
+        .flexDiv{
+            display: flex;
+        }
+        .flexDiv span{
+            flex: none;
+            align-self: center;
+        }
+    </style>
+</head>
+<body>
+<div id="notice">
+    <form class="layui-form" action="#">
+        <blockquote  class="layui-elem-quote ">
+            <div class="flexDiv">
+                <span>标&emsp;题：&ensp;</span>
+                <input type="text" id="title" name="title" lay-verify="required" class="layui-input input">
+            </div>
+
+        </blockquote>
+        <button type="submit" lay-submit class="layui-btn layui-btn-sm layui-btn-primary send" lay-filter="send">发送</button>
+
+        <blockquote class="layui-elem-quote layui-quote-nm ">
+            <div class="flexDiv">
+                <span>收件人：&ensp;</span>
+                <select id="receiver" name="receiver" disabled lay-verify="required"  class="input">
+                    <option value="${send_user}">${send_username}</option>
+                </select>
+            </div>
+
+        </blockquote>
+
+
+
+        <textarea style="height: 327px" name="context" id="context" lay-verify="required" placeholder="请输入内容"  class="layui-textarea" ></textarea>
+    </form>
+</div>
+<script type="text/javascript">
+    layui.use(['table','layer','element','form'], function(){
+        var table = layui.table,
+            layer=layui.layer,
+            $ = layui.jquery,
+            form = layui.form;
+
+
+
+
+
+
+
+        /*  button.click(function () {
+              alert(receiver.val())
+          });
+  */
+        form.on("submit(send)",function (data) {
+            var data1 = data.field;
+            $.ajax({
+                type:'post',
+                url:'/user/sendMsg',
+                data:{
+                    title:data1.title,
+                    user_id:data1.receiver,
+                    message:data1.context
+                },
+                success:function (data) {
+                    parent.layer.close(parent.layer.index); //再执行关闭
+                    parent.layer.msg(data);
+
+                },
+                error:function () {
+                    parent.layer.msg("服务器错误",{icon:2});
+
+                }
+            });
+
+            return false;
+        })
+
+    });
+
+
+</script>
+
+</body>
+</html>

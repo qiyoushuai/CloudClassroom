@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>教师资格申请</title>
+    <script src="../static/layui/layui.js"></script>
+    <link rel="stylesheet" href="../static/layui/css/layui.css">
+    <style>
+        .tefl{
+            vertical-align: top;
+        }
+        .diploma{
+            vertical-align: top;
+            position: relative;
+            left: 50px;
+        }
+        .layui-elem-field legend{
+            font-weight: 500 !important;
+        }
+        .hr_tea{
+            width: 1200px;
+            height: 20px;
+            left: -10px;
+            position: relative;
+        }
+        .space{
+            height: 20px;
+        }
+        .not_null:before{
+            content: "*";
+            color: red;
+        }
+        .user_info {
+            position: absolute;
+            top: 10px;
+        }
+        html{
+            overflow: auto;
+        }
+        .layui-layout-admin .layui-footer{
+            left: 0px !important;
+        }
+        .layui-layout-admin .layui-logo{
+            color: white !important;
+        }
+        .layui-body{
+            width: 75% !important;
+            left: 15% !important;
+            top: 0px !important;
+            background: #ffffff;
+            height: max-content;
+            overflow-y: hidden;
+        }
+        body{
+            background: #eee;
+        }
+        .layui-layout-admin .layui-body{
+            position: relative !important;
+
+        }
+        .content_addtea{
+            position: relative;
+            top: -10px !important;
+        }
+        .layui-tab-title{
+            top: -10px !important;
+            background: #FAFAFA !important;
+        }
+
+        .content_addtea .layui-form-item{
+            position: relative;
+            left: 50px;
+        }
+        .form_title{
+            height: 40px;
+            position: relative;
+            left: 20px;
+        }
+        .content_addtea{
+            padding: 30px 10px !important;
+        }
+        .layui-textarea {
+            width: 400px !important;
+        }
+        .content_addtea .layui-input{
+            width: 300px !important;
+        }
+        .form_submit {
+            padding: 30px 0px;
+            margin: 20px 0px 0px;
+            background: #fafafa;
+            width: 1160px;
+            position: relative;
+            left: -10px;
+            top: 50px;
+        }
+        .change_pswd{
+            padding: 30px 0px 0px 0px;
+        }
+        .from-content{
+          padding: 30px 0px 0px;
+        }
+
+        /*控制三级菜单的样式*/
+        .nav-lv3 a {
+            display: inline !important;
+            white-space: nowrap;
+            padding: 5px 10px !important;
+        }
+        .nav-lv3 {
+            z-index: 120;
+            display: none;
+            position: absolute;
+            background: #fff;
+            width: 550px;
+            white-space: normal !important;
+            left: 90px;
+            margin: 0px 0px 0px 19px;
+            top: 0px;
+            border: 1px solid #d2d2d2;
+            padding: 16px;
+            box-shadow: 0 2px 4px rgba(0,0,0,.12);
+        }
+        .layui-nav .layui-this:after{
+            width: 0px !important;
+        }
+    </style>
+
+</head>
+<body class="layui-layout-body">
+
+
+<script>
+
+    /*检验登录失效*/
+    layui.use(['element','layer'], function() {
+        var $ = layui.jquery;
+        $('html').on('click',function () {
+            chackUser();
+        });
+
+        $('iframe').contents().on('click',function () {
+            chackUser();
+        });
+        var chackUser = function () {
+            if('${session.username}' == null || '${session.username}' == '' ) {
+                layer.alert("登录已超时，请重新登录", {icon: 5,closeBtn:0}, function () {
+                    location.href = "/";
+                });
+            }
+        };
+
+
+    });
+</script>
+
+
+<div class="layui-layout layui-layout-admin">
+    <div class="layui-header">
+        <div class="layui-logo"  style="cursor: pointer" onclick="location.href='/'">
+            <div class="layui-inline">
+                <i class="layui-icon layui-icon-read" style="font-size: 26px"></i>
+            </div>
+            <div class="layui-inline" >
+                <p style="font-size: 22px">智慧云学堂</p>
+            </div>
+
+
+        </div>
+        <!-- 头部区域（可配合layui已有的水平导航） -->
+        <ul class="layui-nav layui-layout-left">
+            <li class="layui-nav-item"><a href="/">首页</a></li>
+            <li class="layui-nav-item">
+                <a href="javascript:;">课程分类</a>
+                <dl class="layui-nav-child">
+                    @var haschile = 0;
+                    @for(cla in session.classifies){
+                    @haschile = 0;
+                    @if(cla.field == 1001){
+                    <dd>
+                        <a href="/page/home_queryCurr?classify_id=${cla.id}">${cla.title}</a>
+                        @for(cla1 in session.classifies){if(cla1.field == cla.id){ haschile++; }}
+                        @if(haschile >0){
+                        <div class="nav-lv3 layui-anim layui-anim-fadein">
+                                 <span class="layui-breadcrumb" lay-separator="|">
+                                     @for(cla1 in session.classifies){
+                                      @if(cla1.field == cla.id){
+                                        <a href="/page/home_queryCurr?classify_id=${cla1.id}">${cla1.title}</a>
+                                       @}
+                                  @}
+                                </span>
+                        </div>
+                        @}
+                    </dd>
+                    @}
+                    @}
+
+                </dl>
+            </li>
+
+        </ul>
+        <div style="position: absolute;left: 400px;top: 10px">
+            <form class="layui-form" action="/page/home_queryCurr" method="post">
+                <div class="layui-form-item">
+
+                    <div class="layui-input-block">
+                        <div class="layui-inline">
+                            <input type="text" name="curr_name" required  lay-verify="required" placeholder="搜索课程" autocomplete="off" class="layui-input">
+                        </div>
+                        <div class="layui-inline">
+                            <button type="submit" class="layui-btn layui-btn-radius">
+                                <i class="layui-icon">&#xe615;</i>
+                            </button>
+                        </div>
+
+
+                    </div>
+                </div>
+            </form>
+        </div>
+        <ul class="layui-nav layui-layout-right">
+            <li class="layui-nav-item">
+                <a href="javascript:;">
+                    @if(session.pur_url != "" && session.pur_url !=null){
+                    <img src="/resources/${session.pur_url}" class="layui-nav-img">
+                    @}else{
+                    <img src="/resources/purikura/purikura.png" class="layui-nav-img">
+                    @}
+                    @if(session.user_name == null || session.user_name == "" ){
+                    ${session.username}
+                    @}else{
+                    ${session.user_name}
+                    @}
+                </a>
+                <dl class="layui-nav-child">
+                    <dd><a href="/page/homePage_Personal" >个人主页</a></dd>
+                    <dd><a href="/page/personal_information">个人信息</a></dd>
+                    @if(session.user_type == 3){
+                    <dd><a href="/page/teacher_application?id=${session.user_id}">教师资格申请</a></dd>
+                    @}
+                </dl>
+            </li>
+            <li class="layui-nav-item"><a href="/user/logout">退了</a></li>
+        </ul>
+    </div>
+
+
+    <div style="height: 20px"></div>
+    <div class="layui-body">
+        <!-- 内容主体区域 -->
+        <div>
+
+                <div class="content_addtea">
+                    <!--个人信息页面-->
+                    <div class="layui-tab-item layui-show">
+
+                        <form class="layui-form" action="#" lay-filter="information" enctype="multipart/form-data">
+                            <div class="form_title">
+                                <p style="font-size: 21px;font-weight: 400;color: #444444;margin: 40px 0px 0px">
+                                     <fieldset class="layui-elem-field layui-field-title" style="margin-top: 30px;width: 1090px">
+                                        <legend> 教师资格申请</legend>
+                                     </fieldset>
+                                </p>
+                            </div>
+                            <div class="from-content">
+                                <div class="layui-form-item">
+                                    <label class="layui-form-label">真实姓名：</label>
+                                    <div class="layui-input-block">
+                                       <div class="user_info">
+                                           <p>${relname}</p>
+                                       </div>
+                                    </div>
+                                </div>
+                                <div class="layui-form-item">
+                                    <label class="layui-form-label">邮箱：</label>
+                                    <div class="layui-input-block">
+                                        <div class="user_info">
+                                            <p>${email}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="layui-form-item">
+                                    <label class="layui-form-label">手机号：</label>
+                                    <div class="layui-input-block">
+                                        <div class="user_info">
+                                            <p>${phone}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="layui-form-item">
+                                    <label class="layui-form-label">联系地址：</label>
+                                    <div class="layui-input-block">
+                                        <div class="user_info">
+                                            <p>${address}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="space"></div>
+                            <hr class="hr_tea">
+                            <div class="space"></div>
+
+
+                            <div class="layui-form-item">
+                                <label class="layui-form-label not_null">身份证号：</label>
+                                <div class="layui-input-block">
+                                    <input type="text" name="idcard_no"  lay-verify="required|idcard_no"  placeholder="请输入您的身份证号" autocomplete="off" class="layui-input">
+                                </div>
+                            </div>
+                            <div class="space"></div>
+                            <div class="layui-form-item">
+                                <label class="layui-form-label not_null">主攻专业：</label>
+                                <div class="layui-input-block">
+                                    <input type="text" name="position"  lay-verify="required"  placeholder="请输入您的主攻专业" autocomplete="off" class="layui-input">
+                                </div>
+                            </div>
+                            <div class="space"></div>
+                            <div class="layui-form-item layui-form-text">
+                                <label class="layui-form-label not_null">教学经历：</label>
+                                <div class="layui-input-block">
+                                    <textarea name="TEACHING" placeholder="请输入您的教学经历或教学目标" lay-verify="required" class="layui-textarea"></textarea>
+                                </div>
+                            </div>
+                            <div class="space"></div>
+                    <div>
+                        <div class="tefl layui-inline">
+                            <div class="layui-form-item">
+                                <label class="layui-form-label not_null">教资证书：</label>
+                                <div class="layui-input-block">
+                                    <div class="layui-upload-drag uploadMore"  id="TEFL">
+                                        <i class="layui-icon"></i>
+                                        <p>点击上传，或将图片拖拽到此处</p>
+                                        <div class="layui-hide" id="uploadDemoView">
+                                            <hr>
+                                            <img src="" alt="上传成功后渲染" style="max-width: 196px">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+
+                        <div class="diploma layui-inline">
+                            <div class="layui-form-item">
+                                <label class="layui-form-label not_null">学历证书：</label>
+                                <div class="layui-input-block">
+                                    <div class="layui-upload-drag uploadMore"  id="diploma">
+                                        <i class="layui-icon"></i>
+                                        <p>点击上传，或将图片拖拽到此处</p>
+                                        <div class="layui-hide" id="uploadDemoView1">
+                                            <hr>
+                                            <img src="" alt="上传成功后渲染" style="max-width: 196px">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+
+
+
+                            <div class="form_submit">
+                                <div class="layui-form-item">
+                                    <div class="layui-input-block">
+                                        <button id="action" lay-submit lay-filter="info_sub" class="layui-btn" type="button">立即提交</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+
+
+                    </div>
+                </div>
+            <!--  <div class="layui-footer">
+                  &lt;!&ndash; 底部固定区域 &ndash;&gt;
+                  © qiyoushuai.com - 底部固定区域
+              </div>-->
+        </div>
+    </div>
+</div>
+<script>
+    //JavaScript代码区域
+    layui.use(['element','layer','form','upload'], function(){
+        var element = layui.element
+            ,layer = layui.layer
+            ,$ = layui.jquery
+            ,form = layui.form
+            ,upload = layui.upload;
+        var user_id = "${session.user_id}";
+
+    /*    var getInfo = $.ajax({
+            type: 'post',
+            url: '/user/getInfo',
+            data:{
+                id: user_id
+            },
+            success:function (data) {
+                var sex = null;
+                if(data.sex == 1){
+                    sex = "男";
+                }else if(data.sex ==2){
+                    sex = "女";
+                }else{
+                    sex = "保密";
+                }
+                //给表单赋值
+                form.val("information", { //formTest 即 class="layui-form" 所在元素属性 lay-filter="" 对应的值
+                    "name": data.name // "name": "value"
+                    ,"sex": sex
+                    ,"profile": data.profile
+                    ,"relname": data.relname
+                    ,"email": data.email
+                    ,"phone": data.phone
+                });
+            },
+            error: function (data) {
+
+            }
+        });*/
+
+
+
+
+
+
+        //实现表单上传功能！  并执行图片上传功能
+        var img_upload_diploma = false;
+        var img_upload_TEFL = false;
+        var img_url_TEFL;
+        var img_url_diploma;
+        var val;
+
+        //个人信息修改tab
+        form.on('submit(info_sub)',function (data) {
+            val = data.field;
+           if(img_upload_diploma == true && img_upload_TEFL == true){
+               form_submit();
+           }else {
+               layer.alert("请上传您的教师资格证书与学历证书");
+           }
+            return false;
+        });
+
+
+     var form_submit =    function() {
+
+
+                $.ajax({
+                    type: 'post',
+                    url: '/teac/teac_application',
+                    data:{
+                        user_id: user_id,
+                        relname: '${relname}',
+                        email: '${email}',
+                        phone: "${phone}",
+                        address: "${address}",
+                        idcard_no:val.idcard_no,
+                        position:val.position,
+                        TEACHING:val.TEACHING,
+                        url_TEFL:img_url_TEFL,
+                        url_diploma:img_url_diploma
+                    },
+                    success:function (data) {
+                        if(data == "申请成功"){
+                                location.href="/page/teacher_application_notice";
+                        }else {
+                            layer.msg(data,{icon:2})
+                        }
+                    },
+                    error: function (data) {
+                        layer.msg("服务器错误",{icon:5})
+                    }
+                })
+            };
+
+        //教师资格证书上传上传
+        upload.render({
+            elem: '#TEFL'
+            ,url: '/repository/certificate_upload?type=TEFL'
+            ,choose: function(obj){
+                //预读本地文件示例，不支持ie8
+                var item = this.item;
+                obj.preview(function(index, file, result){
+                    item.find('.layui-hide').removeClass('layui-hide').find('img').attr('src', result);
+                });
+            }
+            ,done: function(res){
+                //如果上传失败
+              if(res.code == 0){
+                  layer.msg("上传成功");
+                    img_url_TEFL = res.data.res;
+                    img_upload_TEFL = true;
+                }else {
+                  layer.msg("上传失败");
+              }
+            }
+            ,error: function(){
+                layer.msg("上传失败",{icon:2})
+            }
+        });
+        //学历证书上传
+        upload.render({
+            elem: '#diploma'
+            ,url: '/repository/certificate_upload?type=diploma'
+            ,choose: function(obj){
+                //预读本地文件示例，不支持ie8
+                var item = this.item;
+                console.log(item);
+                obj.preview(function(index, file, result){
+                    item.find('.layui-hide').removeClass('layui-hide').find('img').attr('src', result);
+                });
+            }
+            ,done: function(res){
+                //如果上传失败
+                if(res.code == 0){
+                    layer.msg("上传成功");
+                    img_url_diploma = res.data.res;
+                    img_upload_diploma = true;
+                }else {
+                    layer.msg("上传失败");
+                }
+            }
+            ,error: function(){
+                layer.msg("上传失败",{icon:2})
+            }
+        });
+
+
+
+
+        //设置身份证验证自定义规则
+        form.verify({
+            idcard_no: function(value, item){ //value：表单的值、item：表单的DOM对象
+
+                if(!/^[1-9]\d{5}(18|19|([23]\d))\d{2}((0[1-9])|(10|11|12))(([0-2][1-9])|10|20|30|31)\d{3}[0-9Xx]$|^[1-9]\d{5}\d{2}((0[1-9])|(10|11|12))(([0-2][1-9])|10|20|30|31)\d{2}[0-9Xx]$/.test(value)){
+                    return '您填写的身份证号码格式不正确';
+                }
+
+            }
+
+        });
+
+
+        /*=======================================================*/
+        //控制三级菜单的显示与隐藏
+        var none;
+        $(".nav-lv3").hover(function () {
+            clearTimeout(none);
+            $(this).css("display","block");
+        },function () {
+            clearTimeout(none);
+            $(this).css("display","none");
+        });
+        $(".layui-nav-child dd").hover(function () {
+            clearTimeout(none);
+            $(this).siblings().find(".nav-lv3").css("display","none");
+            $(this).find('.nav-lv3').css("display","block");
+        },function () {
+            var $this = $(this);
+            none = setTimeout(function (){$this.find(".nav-lv3").css("display","none")},300)
+        });
+        /*============================================================*/
+    });
+</script>
+</body>
+</html>

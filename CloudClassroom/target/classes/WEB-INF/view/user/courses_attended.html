@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>我参加的课程</title>
+    <script src="../static/layui/layui.js" type="text/javascript"></script>
+    <link href="../static/layui/css/layui.css" rel="stylesheet">
+    <style>
+        html{
+            overflow-y: auto;
+        }
+        .content_page {
+            position: relative;
+            width: 100%;
+            min-height: 278px;
+            background: white;
+        }
+        .curr_div{
+            display: flex;
+            width: 100%;
+        }
+        .kecheng {
+            width:100%;
+            position: relative;
+            margin-top: 40px;
+        }
+
+        .kecheng .content{
+            display: flex;
+            margin: 0 40px;
+            width: 1230px;
+        }
+
+        .currs_title{
+            height: 40px;
+            background-color: #F2F2F2;
+            line-height: 40px;
+        }
+        .currs_title .charge{
+            position: absolute;
+            right: 60px;
+        }
+        .currs_title .curr_charge{
+            cursor: pointer;
+        }
+        .green_color{
+            color: #009688;
+        }
+        .currs_title .curr_charge:hover{
+            color: #009688;
+        }
+
+        .tiling{   /*实现容器内的div左右上下平铺*/
+            -ms-flex-line-pack: justify;
+            align-content: space-between;
+            -ms-flex-wrap: wrap;
+            flex-wrap: wrap;
+            -ms-flex-pack: justify;
+            justify-content: space-between;
+        }
+        .video_card{
+            width: 206px;
+
+            margin-bottom: 50px;
+
+
+        }
+        i.layui-icon-delete{
+            cursor: pointer;
+            position: relative;
+            left: 20px;
+            top: 8px;
+            font-size: 18px;
+        }
+
+        p.msg {
+            font-size: 12px;
+            font-family: auto,serif;
+            color: #999999;
+        }
+        .box_shadow{
+            box-shadow: 4px 4px 5px #999;
+        }
+        .video_card .pic{
+            width: 206px;
+            height: 130px;
+            overflow: hidden;
+        }
+        .video_card .pic img{
+            width: 206px;
+            height: 130px;
+            transition: all 0.6s;
+        }
+        .video_card .pic img:hover{
+            transform: scale(1.2);
+        }
+        .video_card .txt .name{
+            font-size: 16px;
+            height: 45px;
+            text-overflow: -o-ellipsis-lastline;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            width:206px;
+        }
+        .video_card .tag{
+            min-width: 50px;
+            margin-top: 5px;
+            color: #999999;
+        }
+        .video_card .txt .tag img{
+            width: 6px;
+
+        }
+        .begin_class{
+            position: relative;
+            left: 56px;
+            margin: 10px 0;
+        }
+        .begin_class button{
+            border: 2px solid #009688;
+            color: #009688;
+            line-height: 34px;
+            background-color: white;
+        }
+        .begin_class button:hover {
+            opacity: .9;
+            background-color: #009688;
+            color: #fff;
+        }
+
+        .none p{
+            font-size: 22px;
+            color: #666666;
+            font-family: auto;
+            font-weight: 300;
+        }
+        .none{
+            position: relative;
+            left: 550px;
+        }
+
+
+
+    </style>
+
+</head>
+
+<body class="layui-layout-body">
+<div class="layui-layout layui-layout-admin">
+
+    <div>
+        <!-- 内容主体区域 -->
+        <div>
+            <div class="currs_title">
+                <div class="charge">
+                    @if(session.curr_title_type == 0){
+                        <a class="layui-inline curr_charge green_color">全部课程</a>&ensp;-&ensp;
+                        <a class="layui-inline curr_charge">免费</a>&ensp;-&ensp;
+                        <a class="layui-inline curr_charge">收费</a>
+                    @}else if(session.curr_title_type ==1){
+                        <a class="layui-inline curr_charge ">全部课程</a>&ensp;-&ensp;
+                        <a class="layui-inline curr_charge">免费</a>&ensp;-&ensp;
+                        <a class="layui-inline curr_charge green_color">收费</a>
+                    @}else{
+                        <a class="layui-inline curr_charge ">全部课程</a>&ensp;-&ensp;
+                        <a class="layui-inline curr_charge green_color">免费</a>&ensp;-&ensp;
+                        <a class="layui-inline curr_charge">收费</a>
+                    @}
+
+                </div>
+
+            </div>
+            <div class="content_page" >
+
+                <div class="curr_div tiling">
+                    <div class="kecheng">
+                        <!--视频列表-->
+                        <div class="content tiling">
+
+
+                            @var currNum=0;
+                            @for(curr in session.myCurrs){
+                            <div class="video_card box_shadow">
+                                <a href="/page/home_enrollCurr?curr_id=${curr.id}" title="${curr.c_name}" target="_blank">
+                                    <div class="pic">
+                                        <img src="/resources${curr.cover_url}">
+                                    </div>
+                                    <div class="txt">
+                                        <p class="name">${curr.c_name}</p>
+                                    </div>
+                                </a>
+                                <div>
+
+                                    <div>
+                                        <p class="msg">课程标签：
+                                            <span class="layui-badge-rim">${curr.classify}</span>
+                                            @var child = curr.classify_child;
+                                            @if(child != "null"){
+                                            <span class="layui-badge-rim">${curr.classify_child}</span>
+                                            @}
+                                        </p>
+                                    </div>
+                                    <div>
+                                        <p class="msg">教师：${curr.tea_relname}</p>
+                                    </div>
+                                    <div>
+                                        <p class="msg">报名时间：${curr.enroll_date}</p>
+                                    </div>
+                                    <div class="begin_class">
+                                        <button  class="layui-btn layui-btn-radius begin_study" name="${curr.id}">
+                                            开始学习
+                                        </button>
+                                        <input  class="layui-hide curr_id" type="text" value="${curr.id}">
+                                        <input  class="layui-hide curr_state" type="text" value="${curr.state}">
+                                       <i class="layui-icon layui-icon-delete delete_curr" title="删除"></i>
+                                    </div>
+
+                                </div>
+
+                            </div>
+                            @currNum++;
+                            @if(currLP.last && (session.curr_num%5 !=0)){
+                            @for(var a=0;a<5-(session.curr_num%5);a++){
+                            <div class="video_card" style="cursor: auto;">
+                            </div>
+                            @}
+                            @}
+                            @}elsefor{
+                            <div class="none">
+                                <img class="layui-inline" src="../static/img/暂无.png" style="height: 40px;width: 40px;">
+                                <p class="layui-inline">暂无数据</p>
+                            </div>
+                            @}
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+</div>
+<script>
+    //JavaScript代码区域
+    layui.use(['element','layer','carousel','util'], function(){
+        var element = layui.element,
+            layer = layui.layer,
+            $ = layui.jquery,
+            carousel = layui.carousel,
+
+            util = layui.util;
+
+        $(".begin_study").click(function () {
+            var curr_id = $(this).parent().find(".curr_id").val();
+            var curr_state = $(this).parent().find(".curr_state").val();
+            if(curr_state != 4){
+                layer.msg("此课程目前为停课状态，请返回首页并刷新页面。");
+                return;
+            }
+            window.open("/page/curr_learning?curr_id="+curr_id);
+        });
+
+        $(".delete_curr").click(function () {
+            var curr_id = $(this).parent().find(".curr_id").val();
+           var index =  parent.layer.confirm("您确定要放弃此课程的学习吗？",function () {
+
+                var type = "${session.curr_title_type}";
+                var type1=null;
+                if(type == 1){
+                    type1 = "收费";
+                }else if(type ==2){
+                    type1 ="免费";
+                }
+                $.ajax({
+                    type:'post',
+                    url:'/user/giveUpCourse',
+                    data:{
+                        curr_id:curr_id
+                    },
+                    success:function (data) {
+                        parent.layer.close(index);
+                        location.href="/page/courses_attended?type="+type1
+
+                    },
+                    error:function () {
+                        parent.layer.msg("系统错误",{icon:2})
+                    }
+                })
+            });
+
+        });
+
+        $(".curr_charge").click(function () {
+            var type = $(this).text();
+            location.href="/page/courses_attended?type="+type
+
+        })
+    });
+</script>
+</body>
+
+
+</html>

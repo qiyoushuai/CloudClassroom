@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>添加网站首页轮播图</title>
+    <script src="../../../static/layui/layui.js"></script>
+    <link rel="stylesheet" href="../../../static/layui/css/layui.css">
+    <style>
+        .layui-input-block{
+            margin-left: 40px !important;
+            margin-right: 40px !important;
+        }
+    </style>
+</head>
+<body>
+<form class="layui-form" action="">
+    <div class="layui-form-item">
+        <div class="layui-input-block">
+
+            <div class="layui-upload-drag" id="test10">
+                <i class="layui-icon"></i>
+                <p>点击上传轮播图片，或将图片拖拽到此处</p>
+                @if(session.carousel == 0){
+                <div class="layui-hide" id="uploadDemoView">
+                    <hr>
+                    <img class="carousel_img" src="" alt="上传成功后渲染" style="max-width: 196px">
+                </div>
+                @}else{
+
+                <div class="" id="uploadDemoView">
+                    <hr>
+                    <img class="carousel_img" src="${session.carousel.img_url}" alt="上传成功后渲染" style="max-width: 196px">
+                </div>
+                @}
+
+            </div>
+
+        </div>
+    </div>
+    <div class="layui-form-item">
+
+        <div class="layui-input-block">
+            @if(session.carousel == 0){
+                <input type="text" name="title" required  lay-verify="required" placeholder="请输入轮播标题" autocomplete="off" class="layui-input">
+
+            @}else{
+                <input type="text" name="title" required  lay-verify="required" value="${session.carousel.title}" placeholder="请输入轮播标题" autocomplete="off" class="layui-input">
+            @}
+
+        </div>
+    </div>
+    <div class="layui-form-item">
+
+        <div class="layui-input-block">
+            @if(session.carousel == 0){
+                 <input type="text" name="url" required  lay-verify="required" value="http://" autocomplete="off" class="layui-input">
+
+            @}else{
+                  <input type="text" name="url" required  lay-verify="required" value="${session.carousel.url}" placeholder="请输入页面跳转地址" autocomplete="off" class="layui-input">
+            @}
+
+        </div>
+    </div>
+
+    <div class="layui-form-item layui-form-text">
+     <!--   <label class="layui-form-label">请输入轮播内容</label>-->
+        <div class="layui-input-block">
+            @if(session.carousel == 0){
+
+                 <textarea name="message" placeholder="请输入轮播内容" class="layui-textarea"></textarea>
+            @}else{
+                 <textarea name="message" placeholder="请输入轮播内容" class="layui-textarea">${session.carousel.message}</textarea>
+            @}
+
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <div class="layui-input-block">
+            <button class="layui-btn" lay-submit lay-filter="formDemo">立即提交</button>
+        </div>
+    </div>
+</form>
+
+
+
+
+
+
+<script>
+    //JavaScript代码区域
+    layui.use(['element','layer','table','upload','form'], function() {
+        var element = layui.element,
+            layer = layui.layer,
+            $ = layui.jquery,
+            table = layui.table,
+            upload = layui.upload,
+            form = layui.form;
+        var img_url;
+        var src = $(".carousel_img").attr("src");
+       if(src != null && src!==""){
+           img_url=src;
+       }
+
+        //拖拽上传
+        upload.render({
+            elem: '#test10'
+            ,url: '/repository/carousel_upload' //改成您自己的上传接口
+            ,choose: function(obj){
+                //预读本地文件示例，不支持ie8
+                var item = this.item;
+                obj.preview(function(index, file, result){
+                    item.find('.layui-hide').removeClass('layui-hide').find('img').attr('src', result);
+                });
+            }
+            ,done: function(res){
+                if(res.code  === 0){
+                    layer.msg('上传成功');
+                    img_url = res.data.res;
+                }
+            }
+        });
+
+
+
+        //监听提交
+        form.on('submit(formDemo)', function(data){
+            var data1 = data.field;
+            if(img_url == null){
+                parent.layer.msg("请上传轮播图片",{icon:2});
+                return false;
+            }
+
+            $.ajax({
+                type:'post',
+                url:'/curr/addCarousel',
+                data:{
+                    title:data1.title,
+                    url:data1.url,
+                    message:data1.message,
+                    img_url:img_url
+                },
+                success:function (data) {
+                    parent.layer.close(parent.layer.index);
+                    parent.layer.msg(data);
+                    var iframe = parent.frames["homePage_carousel_manager"];
+                   iframe.location.reload();
+                },
+                error:function () {
+                    parent.layer.msg("系统错误",{icon:2});
+                }
+            });
+            return false;
+        });
+
+    })
+</script>
+</body>
+</html>

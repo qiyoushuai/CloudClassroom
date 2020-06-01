@@ -1,0 +1,314 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sdjt.classroom.dao.CurriculumMapper">
+
+    <!--如果要映射的表中有double类型的数据。一定要指明jdbcType 和javaType -->
+  <!--  <resultMap id="pcMap" type="Pc">
+        <id column="pcid" property="pcid"></id>
+        <result column="pcname" property="pcname"></result>
+        <result column="pcdate" property="pcdate" ></result>
+        <result column="userid" property="userid"></result>
+        <result column="saleid" property="saleid"></result>
+        <result column="supplierid" property="supplierid"></result>
+        <result column="auditstatus" property="auditstatus"></result>
+        <result column="pcprice" property="pcprice" jdbcType="DOUBLE" javaType="DOUBLE"></result>
+        <result column="reason" property="reason"></result>
+    </resultMap>-->
+<select id="get_classifyRecord" resultType="com.sdjt.classroom.model.Classify_record">
+<bind name="num" value="(pageIndex-1)*pageSize"/>
+   select id,classify_id,name_new,name_old,type,edit_userid,DATE_FORMAT(edit_date,'%Y-%m-%d %H:%i:%s')edit_date from classify_record  ORDER BY ID DESC limit #{num},#{pageSize}
+</select>
+<select id="getRecord_num" resultType="java.lang.Integer">
+    select count(*) from classify_record
+</select>
+
+    
+    <select id="query_classify_record" resultType="com.sdjt.classroom.model.Classify_record">
+        <bind name="num" value="(pageIndex-1)*pageSize"/>
+         select id,classify_id,name_new,name_old,type,edit_userid,DATE_FORMAT(edit_date,'%Y-%m-%d %H:%i:%s')edit_date
+         from classify_record
+        where name_new regexp #{text}
+        or name_old regexp #{text}
+        or classify_id regexp #{text}
+        or type regexp #{text}
+        or edit_userid regexp #{text}
+        or edit_date regexp #{text} limit #{num},#{pageSize}
+    </select>
+    <select id="query_getRecord_num" resultType="java.lang.Integer">
+        select COUNT(*)
+        from classify_record
+        where name_new regexp #{text}
+        or name_old regexp #{text}
+        or classify_id regexp #{text}
+        or type regexp #{text}
+        or edit_userid regexp #{text}
+        or edit_date regexp #{text}
+    </select>
+    
+    <select id="classifyList_new" resultType="com.sdjt.classroom.model.Classify">
+        select id,field,title,spread from classify
+    </select>
+
+    <delete id="classify_del">
+        delete from classify where id = #{id} OR field = #{id}
+    </delete>
+
+    <!--Integer getMaxClassify();-->
+    <select id="getMaxClassify" resultType="java.lang.Integer">
+            select MAX(id) from classify
+    </select>
+
+    <insert id="classify_add">
+        insert into classify (id,title,field,add_userid,add_date,spread) values (#{id},#{title},#{field},#{add_userid},SYSDATE(),1)
+    </insert>
+
+    <update id="classify_edit" >
+        update classify set title = #{title} where id = #{id}
+    </update>
+
+    <insert id="classify_record" parameterType="com.sdjt.classroom.model.Classify_record">
+        insert into classify_record (name_old,classify_id,name_new,type,edit_userid,edit_date) values (#{name_old},#{classify_id},#{name_new},#{type},#{edit_userid},SYSDATE())
+    </insert>
+    <select id="queryClassify_title" resultType="java.lang.String">
+        select title from classify where id = #{id}
+    </select>
+
+    <select id="userList"  resultType="com.sdjt.classroom.model.User">
+<bind name="Num" value="(pageIndex-1)*pageSize"/>
+        select
+        id,username,password,name,sex,address,phone,email,DATE_FORMAT(add_date,'%Y-%m-%d %H:%i:%s')add_date,money,type,state,certificate,popularity,relname
+        ,profile,purikura
+        from user limit #{Num},#{pageSize}
+    </select>
+
+    <select id="userCount" resultType="java.lang.Integer">
+        select count(*) from user
+    </select>
+
+    <select id="queryUser" resultType="com.sdjt.classroom.model.User">
+        <bind name="Num" value="(pageIndex-1)*pageSize"/>
+        select
+        id,username,password,name,sex,address,phone,email,DATE_FORMAT(add_date,'%Y-%m-%d %H:%i:%s')add_date,money,type,state,certificate,popularity,relname
+        ,profile,purikura
+        from user where
+        id regexp #{text}
+        or username regexp #{text}
+        or name regexp #{text}
+         limit #{Num},#{pageSize}
+    </select>
+
+    <select id="query_userCount" resultType="java.lang.Integer">
+        select
+        COUNT(*)
+        from user where
+        id regexp #{text}
+        or username regexp #{text}
+        or name regexp #{text}
+    </select>
+
+    <select id="queryUserById" resultType="com.sdjt.classroom.model.User">
+         select
+        id,username,password,name,sex,address,phone,email,DATE_FORMAT(add_date,'%Y-%m-%d %H:%i:%s')add_date,money,type,state,certificate,popularity,relname
+        ,profile,purikura
+        from user where
+        id = #{id}
+    </select>
+
+    <update id="edit_lock">
+        update user set state = #{state} where id = #{id}
+    </update>
+
+    <update id="edit_type">
+        update user set type= #{type} , certificate=#{certificate} where id = #{id}
+    </update>
+
+    <!--查询根据filed的id查询-->
+    <select id="queryClassiftById" resultType="com.sdjt.classroom.model.Classify">
+        select id,field,title,spread from classify where field = #{id}
+    </select>
+
+    <!--查询根据id查询-->
+    <select id="queryClassify_ById" resultType="com.sdjt.classroom.model.Classify">
+        select id,field,title,spread from classify where id = #{id}
+    </select>
+
+
+
+
+    <!--
+    Integer getCurriculumCount(Integer state);
+    List<Curriculum> getCurriculum(Integer pageIndex,Integer pageSize,Integer state)
+    -->
+    <select id="getCurriculumCount" resultType="java.lang.Integer">
+        select COUNT(*) from curriculum
+        <where>
+            <if test="state != null and state != ''">
+                state = #{state}
+            </if>
+        </where>
+    </select>
+    <select id="getCurriculum" resultType="com.sdjt.classroom.model.Curriculum">
+        <bind name="Num" value="(pageIndex-1)*pageSize"/>
+         select id,c_name,tea_id,tea_relname,classify,classify_child,charge,price,state,DATE_FORMAT(add_date,'%Y-%m-%d %H:%i:%s')add_date,c_describe,popularity,cover_url
+        from curriculum
+        <where>
+            <if test="state != null and state != ''">
+                state = #{state}
+            </if>
+        </where>
+        limit #{Num},#{pageSize}
+    </select>
+    <select id="getCurriculumById" resultType="com.sdjt.classroom.model.Curriculum">
+        select id,c_name,tea_id,tea_relname,classify,classify_child,charge,price,state,DATE_FORMAT(add_date,'%Y-%m-%d %H:%i:%s')add_date,c_describe,popularity,cover_url
+        from curriculum where id = #{id}
+    </select>
+
+    <select id="getPCLLByCurrId" resultType="com.sdjt.classroom.model.Certificate_PCLL">
+        <bind name="Num" value="(pageIndex-1)*pageSize"/>
+        select * from certificate_pcll where curriculum_id = #{curriculum_id}   limit #{Num},#{pageSize}
+    </select>
+    <select id="getPCLLByCurrIdCount" resultType="java.lang.Integer">
+        select COUNT(*) from certificate_pcll where curriculum_id =#{curriculum_id}
+    </select>
+
+    <update id="updateCurriculum_state">
+        update curriculum set state = #{state} where id=#{id}
+    </update>
+
+    <select id="getCourseList" resultType="com.sdjt.classroom.model.Curriculum">
+        <bind name="Num" value="(pageIndex-1)*pageSize"/>
+        select  id,c_name,tea_id,tea_relname,classify,classify_child,charge,price,state,DATE_FORMAT(add_date,'%Y-%m-%d %H:%i:%s')add_date,c_describe,popularity,cover_url
+        FROM curriculum where
+        <choose>
+            <when test="(state != null and state !='')and(text != null and text !='')">
+                state = #{state}
+                and( id = #{text}
+                or tea_relname regexp #{text}
+                or tea_id = #{text}
+                or c_name regexp #{text}
+                or c_describe regexp #{text})
+                ORDER BY popularity DESC
+                limit #{Num},#{pageSize}
+            </when>
+            <when test="(state != null and state !='')and(text == null or text =='')">
+                state = #{state} ORDER BY popularity DESC
+                limit #{Num},#{pageSize}
+            </when>
+            <when test="(text != null and text !='')and(state == null or state =='')">
+                id = #{text}
+                or tea_relname regexp #{text}
+                or tea_id = #{text}
+                or c_name regexp #{text}
+                or c_describe regexp #{text}
+                ORDER BY popularity DESC
+                limit #{Num},#{pageSize}
+            </when>
+            <otherwise>
+                1=1
+                ORDER BY popularity DESC
+                limit #{Num},#{pageSize}
+            </otherwise>
+        </choose>
+    </select>
+
+    <select id="getCourseListCount" resultType="java.lang.Integer">
+        select count(*) from curriculum where
+        <choose>
+            <when test="(state != null and state !='')and(text != null and text !='')">
+                state = #{state}
+                and( id = #{text}
+                or tea_relname regexp #{text}
+                or tea_id = #{text}
+                or c_name regexp #{text}
+                or c_describe regexp #{text})
+            </when>
+            <when test="(state != null and state !='')and(text == null or text =='')">
+                state = #{state}
+            </when>
+            <when test="(text != null and text !='')and(state == null or state =='')">
+                id = #{text}
+                or tea_relname regexp #{text}
+                or tea_id = #{text}
+                or c_name regexp #{text}
+                or c_describe regexp #{text}
+            </when>
+            <otherwise>
+                1=1
+            </otherwise>
+        </choose>
+    </select>
+
+
+
+    <select id="homePage_getCruuiculum" resultType="com.sdjt.classroom.model.Curriculum">
+        SELECT   id,c_name,tea_id,tea_relname,classify,classify_child,charge,price,state,DATE_FORMAT(add_date,'%Y-%m-%d %H:%i:%s')add_date,c_describe,popularity,cover_url
+         FROM curriculum where state = 4 and tea_id in(select id from user where state = 1) ORDER BY RAND()  limit 8
+    </select>
+
+    <select id="homePage_queryCurr" resultType="com.sdjt.classroom.model.Curriculum">
+        select  id,c_name,tea_id,tea_relname,classify,classify_child,charge,price,state,DATE_FORMAT(add_date,'%Y-%m-%d %H:%i:%s')add_date,c_describe,popularity,cover_url
+         FROM curriculum
+         <where>
+             <if test="text != null and text != ''">
+                 c_name regexp #{text} and state = 4
+             </if>
+             <if test="classify_id != null and classify_id !=''">
+                 and (classify = #{classify_id}
+                 or classify_child = #{classify_id}) and state = 4
+             </if>
+         </where>
+
+         order by popularity DESC
+    </select>
+    <select id="homePage_freeCurr" resultType="com.sdjt.classroom.model.Curriculum">
+        SELECT   id,c_name,tea_id,tea_relname,classify,classify_child,charge,price,state,DATE_FORMAT(add_date,'%Y-%m-%d %H:%i:%s')add_date,c_describe,popularity,cover_url
+         FROM curriculum where state = 4 and charge = 2 and tea_id in(select id from user where state = 1) ORDER BY RAND()  limit 8
+    </select>
+    <select id="homePage_freeCurr_rank" resultType="com.sdjt.classroom.model.Curriculum">
+        SELECT   id,c_name,tea_id,tea_relname,classify,classify_child,charge,price,state,DATE_FORMAT(add_date,'%Y-%m-%d %H:%i:%s')add_date,c_describe,popularity,cover_url
+         FROM curriculum where state = 4 and charge = 2 and tea_id in(select id from user where state = 1) ORDER BY popularity DESC  limit 10
+    </select>
+    <select id="homePage_noFreeCurr" resultType="com.sdjt.classroom.model.Curriculum">
+        SELECT   id,c_name,tea_id,tea_relname,classify,classify_child,charge,price,state,DATE_FORMAT(add_date,'%Y-%m-%d %H:%i:%s')add_date,c_describe,popularity,cover_url
+         FROM curriculum where state = 4 and charge = 1 and tea_id in(select id from user where state = 1) ORDER BY RAND()  limit 8
+    </select>
+    <select id="homePage_noFreeCurr_rank" resultType="com.sdjt.classroom.model.Curriculum">
+        SELECT   id,c_name,tea_id,tea_relname,classify,classify_child,charge,price,state,DATE_FORMAT(add_date,'%Y-%m-%d %H:%i:%s')add_date,c_describe,popularity,cover_url
+         FROM curriculum where state = 4 and charge = 1 and tea_id in(select id from user where state = 1) ORDER BY popularity DESC  limit 10
+    </select>
+
+
+
+
+    <select id="getChaptersByCurrId" resultType="com.sdjt.classroom.model.Chapter">
+        select id,cha_name,curr_id,pid,url from chapter where curr_id = #{curr_id} order by id
+    </select>
+
+    <update id="addCurrPopularity">
+        update curriculum set popularity = popularity+ #{num} where id = #{curr_id}
+    </update>
+    <update id="addUserPopularity">
+        update user set popularity = popularity + #{num} where id = (select tea_id from curriculum where id = #{curr_id})
+    </update>
+
+
+    <insert id="addCurrComment" parameterType="com.sdjt.classroom.model.Curr_comment" >
+        insert into curr_comment (curr_id,user_id,context,evaluate,date) values
+        (#{curr_id},#{user_id},#{context},#{evaluate},now())
+    </insert>
+
+    <select id="queryChooseCourseOrNot" resultType="java.lang.Integer">
+        select count(*) from course_stu where user_id = #{user_id} and curr_id = #{curr_id}
+    </select>
+
+    <select id="getCurrCommentByCurrId" resultType="com.sdjt.classroom.model.Curr_comment">
+        <bind name="num" value="(pageIndex-1)*pageSize"/>
+        select a.id,a.curr_id,a.user_id,a.context,date_format(a.date,"%Y-%m-%d %H:%i:%s")date,a.evaluate,b.name name,b.username username,b.purikura
+        from curr_comment a,user b
+        where a.user_id = b.id and a.curr_id = #{curr_id} order by date DESC limit #{num},#{pageSize}
+    </select>
+    <select id="getCurrCommentByCurrId_Count" resultType="java.lang.Integer">
+         select  count(*)  from curr_comment a,user b
+        where a.user_id = b.id and a.curr_id = #{curr_id}
+    </select>
+</mapper>

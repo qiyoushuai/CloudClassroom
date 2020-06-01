@@ -1,0 +1,196 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sdjt.classroom.dao.UserMapper">
+
+    <!--如果要映射的表中有double类型的数据。一定要指明jdbcType 和javaType -->
+  <!--  <resultMap id="pcMap" type="Pc">
+        <id column="pcid" property="pcid"></id>
+        <result column="pcname" property="pcname"></result>
+        <result column="pcdate" property="pcdate" ></result>
+        <result column="userid" property="userid"></result>
+        <result column="saleid" property="saleid"></result>
+        <result column="supplierid" property="supplierid"></result>
+        <result column="auditstatus" property="auditstatus"></result>
+        <result column="pcprice" property="pcprice" jdbcType="DOUBLE" javaType="DOUBLE"></result>
+        <result column="reason" property="reason"></result>
+    </resultMap>-->
+ <insert id="user_add" parameterType="com.sdjt.classroom.model.User">
+     insert into user (username,password,add_date,money,type,state,popularity,learn_time,learn_time_all) VALUES (#{username},#{password},SYSDATE(),0.00,3,1,0,0,0)
+ </insert>
+
+    <select id="userLogin" parameterType="com.sdjt.classroom.model.User"  resultType="com.sdjt.classroom.model.User">
+        select * from user where username = #{username} and password = #{password}
+    </select>
+
+<select id="getInfo" resultType="com.sdjt.classroom.model.User">
+    select * from user where id = #{id}
+</select>
+
+    <select id="getUserIdByUsername" resultType="java.lang.Integer">
+        select id from user where username = #{username}
+    </select>
+
+
+    <!--boolean editInfo(User user);-->
+    <update id="editInfo" parameterType="com.sdjt.classroom.model.User">
+        UPDATE user
+        set name=#{name},sex=#{sex},profile=#{profile},relname=#{relname},email=#{email},phone=#{phone},
+        purikura=#{purikura},address=#{address}
+        WHERE id=#{id}
+    </update>
+
+    <select id="get_purikura_url" resultType="java.lang.String">
+        select purikura from user where id = #{id}
+    </select>
+
+    <update id="changePswd">
+        update user
+        set password = #{pswd_new}
+        where id = #{id} and password = #{pswd_old}
+    </update>
+
+    <select id="getCertificateById" resultType="com.sdjt.classroom.model.Certificate">
+        select id,TEFL,diploma from certificate where id = (SELECT certificate from user where id = #{id})
+    </select>
+
+    <select id="getAllCourseIdByStuId" resultType="com.sdjt.classroom.model.Course_Stu">
+        select id,curr_id,user_id from course_stu where user_id = #{user_id}
+    </select>
+
+    <insert id="enrollCurr" parameterType="java.lang.Integer">
+        insert into course_stu (user_id,curr_id,add_date) values (#{user_id},#{curr_id},sysdate())
+    </insert>
+
+    <select id="getOrderMaxId" resultType="java.lang.Integer">
+        SELECT MAX(ID) from curr_buy_record
+    </select>
+
+    <update id="eidtMoney">
+        <if test="type == 1">
+            update user set money=money+#{price} where id = #{id}
+        </if>
+        <if test="type == 2">
+            update user set money=money-#{price} where id = #{id}
+        </if>
+    </update>
+
+    <insert id="curr_buy_record" >
+        insert into curr_buy_record (id,curr_id,user_id,teac_id,price,pay_date) values
+        (#{record_id},#{curr_id},#{user_id},#{teac_id},#{price},sysdate())
+    </insert>
+
+    <select id="getMyCourses" resultType="com.sdjt.classroom.model.Curriculum">
+         <!--SELECT   id,c_name,tea_id,tea_relname,classify,classify_child,charge,price,state,DATE_FORMAT(add_date,'%Y-%m-%d %H:%i:%s')add_date,c_describe,popularity,cover_url
+         FROM curriculum where id in (select curr_id from course_stu where user_id = #{user_id}) -->
+            select
+            a.id,a.c_name,a.tea_id,a.tea_relname,a.classify,
+            a.classify_child,a.charge,a.price,a.state,DATE_FORMAT(a.add_date,'%Y-%m-%d %H:%i:%s')add_date,
+            a.c_describe,a.popularity,a.cover_url,DATE_FORMAT(b.add_date,'%Y-%m-%d') enroll_date
+            from curriculum a,course_stu b where a.id=b.curr_id and  a.state in (4,5,6) and b.user_id = #{user_id}
+            <if test="charge != null">
+                and a.charge = #{charge}
+            </if>
+            order by b.add_date DESC
+    </select>
+
+    <delete id="giveUpCourse">
+        delete from course_stu where user_id = #{user_id} and curr_id = #{curr_id}
+    </delete>
+    
+    <insert id="makeEarnings" >
+        insert into earnings (user_id,earnings_today,total_revenue) values (#{user_id},0.00,0.00)
+    </insert>
+
+    <update id="updateEarnings" >
+        update earnings
+         set earnings_today = earnings_today+ #{price} ,total_revenue = total_revenue + #{price}
+        where user_id = #{user_id}
+    </update>
+
+    <select id="myBuyCourseRecord" resultType="com.sdjt.classroom.model.Curriculum">
+            select
+            a.id,a.c_name,a.tea_id,a.tea_relname,a.classify,
+            a.classify_child,a.charge,a.price,a.state,DATE_FORMAT(a.add_date,'%Y-%m-%d %H:%i:%s')add_date,
+            a.c_describe,a.popularity,a.cover_url,DATE_FORMAT(b.pay_date,'%Y-%m-%d') enroll_date,b.id order_id
+            from curriculum a,curr_buy_record b where a.id=b.curr_id  and b.user_id = #{user_id}
+
+            order by b.pay_date DESC
+    </select>
+
+    <delete id="delOrder">
+        delete from curr_buy_record where id = #{order_id}
+    </delete>
+
+
+    <select id="getNotice" resultType="com.sdjt.classroom.model.Notice">
+        <bind name="Num" value="(pageIndex-1)*pageSize"/>
+        select a.id,a.user_id,a.title,a.message,a.type,date_format(a.send_date,"%Y-%m-%d %H:%i:%s")send_date,a.send_user,b.name send_name,b.type send_type
+        ,b.username send_username
+        from notice a,user b where a.send_user = b.id
+        and a.user_id = #{user_id} order by send_date DESC
+         limit #{Num},#{pageSize} 
+    </select>
+    <select id="getNoticeCount" resultType="java.lang.Integer">
+        select COUNT(*)
+        from notice
+         where user_id = #{user_id}
+    </select>
+
+    <update id="updateNoticeType">
+        update notice set type = 2 where id in
+        <foreach collection="notices_id" item="item" index="index" open="(" close=")" separator=",">
+            #{item}
+        </foreach>
+        
+    </update>
+    
+    <delete id="deleteNotice">
+        delete from notice where id in 
+        <foreach collection="notices_id" item="item" open="(" close=")" separator=",">
+            #{item}
+        </foreach>
+    </delete>
+
+    <update id="changeNoticeType">
+         update notice set type = 2 where id = #{notice_id}
+    </update>
+
+    <select id="seeNotice" resultType="com.sdjt.classroom.model.Notice">
+        select a.id,a.user_id,a.title,a.message,a.type,date_format(a.send_date,"%Y-%m-%d %H:%i:%s")send_date,a.send_user,b.name send_name,b.type send_type
+        ,b.username send_username
+        from notice a,user b where a.send_user = b.id
+        and a.id = #{notice_id}
+    </select>
+
+    <update id="updateLearnTime">
+        update user set learn_time = learn_time+ #{learn_time} ,learn_time_all = learn_time_all + #{learn_time}
+        where id = #{user_id}
+    </update>
+
+    <select id="getPercentageOfLearnTime" resultType="java.lang.String">
+        select CONCAT(ROUND((select COUNT(*) from user where learn_time <![CDATA[ < ]]> #{learn_time} and state = 1 and type <![CDATA[ <> ]]> 1 )/
+        (select COUNT(*)-1 from user where state = 1 and type <![CDATA[ <> ]]> 1)*100,0),"%")percent
+    </select>
+
+    <select id="getLearnTimeAndAllLearnTimeByUserId" resultType="com.sdjt.classroom.model.User">
+        select learn_time,learn_time_all from user where id = #{user_id}
+    </select>
+
+    <select id="getMyCoursesNum" resultType="java.lang.Integer">
+        select count(*) from course_stu where user_id = #{user_id}
+    </select>
+
+    <select id="getLearnTimeRecordByUserId" resultType="com.sdjt.classroom.model.LearnTimeRecord">
+        select * from(select learn_time,date_format(date,"%m-%d")date from learn_time_record where user_id = #{user_id} order by date DESC  limit 7)learn_time_record ORDER BY date
+
+    </select>
+
+    <select id="Email_getUserList" resultType="com.sdjt.classroom.model.User">
+        select id,username from user where id <![CDATA[ <> ]]> #{user_id}
+    </select>
+
+    <select id="getCourse_StuByUserIdAndCurrId" resultType="com.sdjt.classroom.model.Course_Stu">
+        select * from course_stu where curr_id =#{curr_id} and user_id = #{user_id}
+    </select>
+
+</mapper>

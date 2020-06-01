@@ -1,0 +1,946 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>智慧云学堂</title>
+    <script src="../static/layui/layui.js" type="text/javascript"></script>
+    <link href="../static/layui/css/layui.css" rel="stylesheet">
+    <style>
+        html{
+            overflow-y: auto;
+        }
+        .carouse{
+            height: 290px;
+            width: 1215.35px;
+        }
+        .carouse a:hover{
+           color: #333333 !important;
+        }
+        .carouse img{
+
+            height: 400px !important;
+        }
+        .carouse .massage{
+            border-radius: 3%;
+            height: 210px;
+            width: 200px;
+            position: absolute;
+            background-color: rgba(0,0,0,0.4);
+            top: 40px;
+            right: 40px;
+        }
+        .carouse .massage .massage_1 {
+            margin: 20px;
+        }
+        .massage_1 .title{
+            max-height: 53px;
+            color: white;
+            width: 160px;
+            font-size: 20px;
+            font-family: inherit;
+           /* text-shadow: 1px 1px 1px white;*/
+            text-overflow: -o-ellipsis-lastline;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+        }
+        .massage_1 .content{
+            height: 97px;
+            color: white;
+            margin: 20px 0;
+            line-height: 26px;
+            text-overflow: -o-ellipsis-lastline;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            display: -webkit-box;
+            -webkit-line-clamp: 4;
+            -webkit-box-orient: vertical;
+        }
+        .content_page {
+            position: relative;
+            width: 80%;
+            left: 10%;
+            background: white;
+        }
+        .layui-layout-admin .layui-footer{
+            left: 0px !important;
+            position: relative !important;
+            margin-top: 40px;
+        }
+        .layui-layout-admin .layui-logo{
+            color: white !important;
+        }
+        .curr_div{
+            display: flex;
+            max-height: 530px;
+            min-height: 320px;
+            width: 1215.35px;
+        }
+        .kecheng {
+            max-height: 500px;
+            min-height: 300px;
+            width: 854px;
+            margin-top: 40px;
+        }
+        .charge_kecheng{
+            height: 500px;
+            width: 1215.35px;
+            margin-top: 40px;
+        }
+        .charge_kecheng .content{
+            max-height: 428px;
+            min-height: 200px;
+            display: flex;
+        }
+        .kecheng .title {
+            margin-bottom: 10px;
+            height: 50px;
+            line-height: 50px;
+        }
+        .kecheng .content{
+            max-height: 428px;
+            min-height: 200px;
+            display: flex;
+        }
+        .curr_paihang{
+            margin-top: 40px;
+            width: 330px;
+        }
+        .curr_paihang .title{
+            margin-bottom: 10px;
+            width: 330px;
+            height: 50px;
+            line-height: 50px;
+
+        }
+        .curr_paihang .title img{
+            width: 40px;
+            height: 40px;
+        }
+        .curr_paihang .content{
+            overflow-y: hidden;
+            max-height: 428px;
+            min-height: 200px;
+        }
+        .curr_paihang .content img{
+            width: 30px;
+
+        }
+        .curr_paihang .content a{
+            font-size: 16px;
+
+        }
+        .float_right{
+            float: right;
+        }
+        .tiling{   /*实现容器内的div左右上下平铺*/
+            -ms-flex-line-pack: justify;
+            align-content: space-between;
+            -ms-flex-wrap: wrap;
+            flex-wrap: wrap;
+            -ms-flex-pack: justify;
+            justify-content: space-between;
+        }
+        .video_card{
+            width: 206px;
+            margin-bottom: 30px;
+
+        }
+        .video_card a{
+            cursor: pointer;
+        }
+        .video_card .price{
+            color: #f4621f;
+            font-size: 14px;
+            margin-top: 5px;
+        }
+        p.mode_title {
+            font-size: 20px;
+            font-weight: 300;
+        }
+        .video_card .pic{
+            width: 206px;
+            height: 130px;
+            overflow: hidden;
+        }
+        .video_card .pic img{
+            width: 206px;
+            height: 130px;
+            transition: all 0.6s;
+        }
+        .video_card .pic img:hover{
+            transform: scale(1.2);
+        }
+        .video_card .txt .name{
+            font-size: 16px;
+            height: 45px;
+            text-overflow: -o-ellipsis-lastline;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            width:206px;
+        }
+        .video_card .tag{
+            min-width: 50px;
+            margin-top: 5px;
+            color: #999999;
+        }
+        .video_card .txt .tag img{
+            width: 6px;
+
+        }
+        .teac_card{
+            margin-bottom: 18px;
+        }
+        .teac_card a{
+           cursor: pointer;
+            width: 290px;
+        }
+        .teac_card p{
+            color: #999999;
+            position: sticky;
+            left: 200px;
+            width: 80px;
+        }
+
+        .course_refresh{
+            position: relative;
+            top: 15px;
+        }
+        .curr_paihang_img{
+            height: 60px !important;
+            width: 100px !important;
+        }
+        .curr_No{
+            margin-right: 10px;
+            vertical-align: top;
+        }
+        .curr_No1{
+            text-overflow: -o-ellipsis-lastline;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            width:180px;
+            height: 43px;
+        }
+        .curr_NoOther{
+            vertical-align: top;
+            width: 290px;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+            overflow: hidden;
+        }
+        .paihang_tab{
+            height: 20px;
+            width: 180px !important;
+            left: 0 !important;
+            font-size: 12px;
+        }
+
+
+        /*控制三级菜单的样式*/
+        .nav-lv3 a {
+            display: inline !important;
+            white-space: nowrap;
+            padding: 5px 10px !important;
+        }
+        .nav-lv3 {
+            z-index: 120;
+            display: none;
+            position: absolute;
+            background: #fff;
+            width: 550px;
+            white-space: normal !important;
+            left: 90px;
+            margin: 0px 0px 0px 19px;
+            top: 0px;
+            border: 1px solid #d2d2d2;
+            padding: 16px;
+            box-shadow: 0 2px 4px rgba(0,0,0,.12);
+        }
+        .layui-nav .layui-this:after{
+           width: 0px !important;
+        }
+
+
+    </style>
+
+</head>
+
+<body class="layui-layout-body">
+<div class="layui-layout layui-layout-admin">
+    <div class="layui-header">
+        <div class="layui-logo" style="cursor: pointer" onclick="location.href='/'">
+            <div class="layui-inline">
+                <i class="layui-icon layui-icon-read" style="font-size: 26px"></i>
+            </div>
+            <div class="layui-inline" >
+                <p style="font-size: 22px">智慧云学堂</p>
+            </div>
+
+        </div>
+        <!-- 头部区域（可配合layui已有的水平导航） -->
+        <ul class="layui-nav layui-layout-left">
+            <li class="layui-nav-item"><a href="/">首页</a></li>
+            <li class="layui-nav-item">
+                <a href="javascript:;">课程分类</a>
+                <dl class="layui-nav-child">
+                    @var haschile = 0;
+                    @for(cla in session.classifies){
+                    @haschile = 0;
+                        @if(cla.field == 1001){
+                         <dd>
+                             <a href="/page/home_queryCurr?classify_id=${cla.id}">${cla.title}</a>
+                             @for(cla1 in session.classifies){if(cla1.field == cla.id){ haschile++; }}
+                             @if(haschile >0){
+                             <div class="nav-lv3 layui-anim layui-anim-fadein">
+                                 <span class="layui-breadcrumb" lay-separator="|">
+                                     @for(cla1 in session.classifies){
+                                      @if(cla1.field == cla.id){
+                                        <a href="/page/home_queryCurr?classify_id=${cla1.id}">${cla1.title}</a>
+                                       @}
+                                  @}
+                                </span>
+                             </div>
+                             @}
+                         </dd>
+                         @}
+                    @}
+
+                </dl>
+            </li>
+
+        </ul>
+        <div style="position: absolute;left: 400px;top: 10px">
+            <form class="layui-form" action="/page/home_queryCurr" method="post">
+                <div class="layui-form-item">
+
+                    <div class="layui-input-block">
+                        <div class="layui-inline">
+                            <input type="text" name="curr_name"  required  lay-verify="required" placeholder="搜索课程" autocomplete="off" class="layui-input">
+                        </div>
+                        <div class="layui-inline">
+                            <button type="submit" class="layui-btn layui-btn-radius">
+                                <i class="layui-icon">&#xe615;</i>
+                            </button>
+                        </div>
+
+
+                    </div>
+                </div>
+            </form>
+        </div>
+
+
+        <ul class="layui-nav layui-layout-right">
+
+            @if(session.username != null  && session.username!= ''){
+
+            <li class="layui-nav-item">
+                <a href="javascript:;">
+                    @if(session.pur_url != "" && session.pur_url !=null){
+                    <img src="/resources/${session.pur_url}" class="layui-nav-img">
+                    @}else{
+                    <img src="/resources/purikura/purikura.png" class="layui-nav-img">
+                    @}
+                    @if(session.user_name == null || session.user_name == "" ){
+                    ${session.username}
+                    @}else{
+                    ${session.user_name}
+                    @}
+                </a>
+                <dl class="layui-nav-child">
+                    <dd><a href="/page/homePage_Personal" >个人主页</a></dd>
+                    <dd><a href="/page/personal_information">个人信息</a></dd>
+                    @if(session.user_type == 3){
+                         <dd><a href="/page/teacher_application?id=${session.user_id}">教师资格申请</a></dd>
+                    @}
+                </dl>
+            </li>
+            <li class="layui-nav-item"><a href="/user/logout" >退了</a></li>
+
+            @}else{
+             <li class="layui-nav-item"><a id="login_add" href="#" data-method="login_add">登录/注册</a> </li>
+            @}
+
+        </ul>
+
+
+    </div>
+
+    <div>
+        <!-- 内容主体区域 -->
+        <div>
+            <div class="content_page" >
+                <!--首页轮播图-->
+                <div class="carouse">
+                    <div class="layui-carousel" id="test1">
+                        <div carousel-item class="carouselList">
+                           <!-- <div>
+                                <a href="#">
+                                    <img class="carouse" src="../static/img/1.jpg">
+                                    <div class="massage">
+                                        <div class="massage_1">
+                                            <p class="title">基于SpringBoot的实战教学</p>
+                                            <p class="content">
+                                                哈哈哈哈哈啊哈
+                                            </p>
+                                        </div>
+                                    </div>
+                                </a>
+                            </div>-->
+                        </div>
+                    </div>
+                </div>
+                <div class="curr_div tiling">
+                         <div class="kecheng">
+        <!--title-->
+        <div class="title">
+            <div class="layui-inline">
+                <img src="../static/img/kecheng.png" style="height: 40px;">
+            </div>
+            <div class="layui-inline">
+                <p class="mode_title">精品课程</p>
+            </div>
+            <button id="course_1_refresh" class="layui-btn layui-btn-primary layui-btn-xs course_refresh" style="float: right">
+                <i class=" layui-icon layui-icon-refresh"></i>
+                换一换
+            </button>
+        </div>
+        <!--视频列表-->
+        <div class="content tiling course_1">
+            @var currNum=0;
+            @for(curr in session.homePageCurr){
+            <div class="video_card">
+                <a href="/page/home_enrollCurr?curr_id=${curr.id}" title="${curr.c_name}">
+                    <div class="pic">
+                        <img src="/resources${curr.cover_url}">
+                    </div>
+                    <div class="txt">
+                        <p class="name">${curr.c_name}</p>
+                    </div>
+                </a>
+                <div>
+                    @if(curr.charge == 1){
+                    <p class="price layui-inline">￥${curr.price}</p>
+                    @}else{
+                    <p class="price layui-inline">免费</p>
+                    @}
+                    <p class="tag layui-inline"><i class="layui-icon layui-icon-note " style="font-size: 15px"></i> ${curr.classify}</p>
+                </div>
+
+            </div>
+            @currNum++;
+               @if(currLP.last && 8-currNum>0){
+                    @for(var a=0;a<8-currNum;a++){
+                        <div class="video_card" style="cursor: auto;">
+                        </div>
+                    @}
+                @}
+            @}
+
+            <!--<div class="video_card">
+                <a>
+                    <div class="pic">
+                        <img src="../static/img/ChMkJ13I1cCIbnHqAARB19ENR_0AAvKPgIQLmgABEHv923.jpg">
+                    </div>
+                    <div class="txt">
+                        <p class="name">SptingBoot大神精讲啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊</p>
+                        <p class="tag"><i class="layui-icon layui-icon-note" style="font-size: 15px"></i> java</p>
+                    </div>
+                </a>
+            </div>-->
+        </div>
+    </div>
+                        <div class="curr_paihang"><!--教师排行-->
+                            <div class="title"> <!--教师排行title-->
+                                <div class="layui-inline">
+                                    <img src="../static/img/paihangbang-.png" >
+                                </div>
+                                <div class="layui-inline">
+                                    <p class="mode_title">金牌教师</p>
+                                </div>
+                            </div>
+                            <!--教师排行card-->
+                            <div class="content">
+                                @var teacNo = 1;
+                                @for(teac in session.homePageTeac){
+                                <div class="teac_card">
+                                    <div class="layui-inline"><span class="layui-badge-rim">
+                                        ${teacNo}
+                                    </span></div>
+                                    <a class="layui-inline">
+                                        <div class="layui-inline">
+                                            @if(teac.purikura != null && teac.purikura != ""){
+                                                  <img src="/resources${teac.purikura}" class="layui-circle">
+                                            @}else{
+                                                 <img src="/resources/purikura/purikura.png" class="layui-nav-img">
+                                            @}
+                                        </div>
+                                        <div class="layui-inline">
+                                            ${teac.relname}
+                                        </div>
+                                        <p class="layui-inline">
+                                            <img src="../static/img/热度.png" style="height: 20px;width: 20px" class="layui-inline">
+                                            @if(teac.popularity == null || teac.popularity == ""){
+                                            0
+                                            @}else{
+                                            ${teac.popularity}
+                                            @}
+
+                                        </p>
+                                    </a>
+
+                                </div>
+                                @teacNo++;
+                                @}
+
+                             <!--   <div class="teac_card">
+                                    <div class="layui-inline"><span class="layui-badge-rim">
+                                        1
+                                    </span></div>
+                                    <a>
+                                        <div class="layui-inline">
+                                             <img src="/resources/purikura/6ca54936-ca4e-4d92-8ec4-bbb392710d2b_342803aae2e74ca38853d129c9c8f074!400x400.jpeg" class="layui-circle">
+                                         </div>
+                                         <div class="layui-inline">
+                                               老师老师
+                                         </div>
+                                    </a>
+                                </div>-->
+
+                            </div>
+                        </div>
+                 </div>
+
+
+                <div class="curr_div tiling">
+                    <div class="kecheng">
+                        <!--title-->
+                        <div class="title">
+                            <div class="layui-inline">
+                                <img src="../static/img/免费课程.png" style="height: 30px;width: 30px">
+                            </div>
+                            <div class="layui-inline">
+                                <p class="mode_title">免费课程</p>
+                            </div>
+                            <button id="course_2_refresh" class="course_refresh layui-btn layui-btn-primary layui-btn-xs" style="float: right">
+                                <i class=" layui-icon layui-icon-refresh"></i>
+                                换一换
+                            </button>
+                        </div>
+                        <!--视频列表-->
+                        <div class="content tiling course_2">
+                            @var currNum1=0;
+                            @for(curr in session.homePageFreeCurr){
+                            <div class="video_card">
+                                <a href="/page/home_enrollCurr?curr_id=${curr.id}" title="${curr.c_name}">
+                                    <div class="pic">
+                                        <img src="/resources${curr.cover_url}">
+                                    </div>
+                                    <div class="txt">
+                                        <p class="name">${curr.c_name}</p>
+                                    </div>
+                                </a>
+                                <div>
+                                    <p class="tag layui-inline"><i class="layui-icon layui-icon-note " style="font-size: 15px"></i> ${curr.classify}</p>
+                                </div>
+
+                            </div>
+                            @currNum1++;
+                            @if(currLP.last && 8-currNum1>0){
+                            @for(var a=0;a<8-currNum1;a++){
+                            <div class="video_card" style="cursor: auto;">
+                            </div>
+                            @}
+                            @}
+                            @}
+
+                            <!--<div class="video_card">
+                                <a>
+                                    <div class="pic">
+                                        <img src="../static/img/ChMkJ13I1cCIbnHqAARB19ENR_0AAvKPgIQLmgABEHv923.jpg">
+                                    </div>
+                                    <div class="txt">
+                                        <p class="name">SptingBoot大神精讲啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊</p>
+                                        <p class="tag"><i class="layui-icon layui-icon-note" style="font-size: 15px"></i> java</p>
+                                    </div>
+                                </a>
+                            </div>-->
+                        </div>
+                    </div>
+                    <div class="curr_paihang"><!--免费课程排行-->
+                        <div class="title"> <!--免费课程排行title-->
+                            <div class="layui-inline">
+                                <img src="../static/img/免费榜.png" >
+                            </div>
+                            <div class="layui-inline">
+                                <p class="mode_title">免费课程排行</p>
+                            </div>
+                        </div>
+                        <!--免费课程排行card-->
+                        <div class="content">
+                            @var freeCurrNo = 1;
+                            @for(curr in session.homePageFreeCurr_rank){
+                            <div class="teac_card">
+                                <div class="layui-inline curr_No">
+                                    @if(freeCurrNo <= 3){
+                                         <span class="layui-badge layui-bg-blue"> ${freeCurrNo}</span>
+                                    @}else{
+                                          <span class="layui-badge-rim">
+                                              ${freeCurrNo}
+                                          </span>
+                                    @}
+
+
+                                </div>
+                                <a class="layui-inline" href="/page/home_enrollCurr?curr_id=${curr.id}" title="${curr.c_name}">
+                                    @if(freeCurrNo == 1){
+                                        <div class="layui-inline">
+                                            @if(curr.cover_url != null && curr.cover_url != ""){
+                                            <img src="/resources${curr.cover_url}" class="curr_paihang_img">
+                                            @}else{
+                                            <img src="/resources/purikura/purikura.png" class="curr_paihang_img">
+                                            @}
+                                        </div>
+                                        <div class="layui-inline" >
+                                            <div class="curr_No1" >
+                                                ${curr.c_name}
+                                            </div>
+                                            <p class="paihang_tab">热度得分:
+                                                @if(curr.popularity == null || curr.popularity == ""){
+                                                0
+                                                @}else{
+                                                ${curr.popularity}
+                                                @}
+                                            </p>
+                                        </div>
+
+                                    @}else{
+                                        <div class="layui-inline curr_NoOther">
+                                            ${curr.c_name}
+                                        </div>
+                                    @}
+
+
+                                </a>
+                            </div>
+                            @freeCurrNo++;
+                            @}
+
+                            <!--   <div class="teac_card">
+                                   <div class="layui-inline"><span class="layui-badge-rim">
+                                       1
+                                   </span></div>
+                                   <a>
+                                       <div class="layui-inline">
+                                            <img src="/resources/purikura/6ca54936-ca4e-4d92-8ec4-bbb392710d2b_342803aae2e74ca38853d129c9c8f074!400x400.jpeg" class="layui-circle">
+                                        </div>
+                                        <div class="layui-inline">
+                                              老师老师
+                                        </div>
+                                   </a>
+                               </div>-->
+
+                        </div>
+                    </div>
+                </div>
+
+
+                <div class="curr_div tiling">
+                    <div class="kecheng">
+                        <!--title-->
+                        <div class="title">
+                            <div class="layui-inline">
+                                <img src="../static/img/付费课程.png" style="height: 30px;width: 30px">
+                            </div>
+                            <div class="layui-inline">
+                                <p class="mode_title">付费课程</p>
+                            </div>
+                            <button id="course_3_refresh" class="course_refresh layui-btn layui-btn-primary layui-btn-xs" style="float: right">
+                                <i class=" layui-icon layui-icon-refresh"></i>
+                                换一换
+                            </button>
+                        </div>
+                        <!--视频列表-->
+                        <div class="content tiling course_3">
+                            @var currNum2=0;
+                            @for(curr in session.homePageNoFreeCurr){
+                            <div class="video_card">
+                                <a href="/page/home_enrollCurr?curr_id=${curr.id}" title="${curr.c_name}">
+                                    <div class="pic">
+                                        <img src="/resources${curr.cover_url}">
+                                    </div>
+                                    <div class="txt">
+                                        <p class="name">${curr.c_name}</p>
+                                    </div>
+                                </a>
+                                <div>
+                                    @if(curr.charge == 1){
+                                    <p class="price layui-inline">￥${curr.price}</p>
+                                    @}else{
+                                    <p class="price layui-inline">免费</p>
+                                    @}
+                                    <p class="tag layui-inline"><i class="layui-icon layui-icon-note " style="font-size: 15px"></i> ${curr.classify}</p>
+                                </div>
+
+                            </div>
+                            @currNum2++;
+                            @if(currLP.last && 8-currNum2>0){
+                            @for(var a=0;a<8-currNum2;a++){
+                            <div class="video_card" style="cursor: auto;">
+                            </div>
+                            @}
+                            @}
+                            @}
+
+                            <!--<div class="video_card">
+                                <a>
+                                    <div class="pic">
+                                        <img src="../static/img/ChMkJ13I1cCIbnHqAARB19ENR_0AAvKPgIQLmgABEHv923.jpg">
+                                    </div>
+                                    <div class="txt">
+                                        <p class="name">SptingBoot大神精讲啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊</p>
+                                        <p class="tag"><i class="layui-icon layui-icon-note" style="font-size: 15px"></i> java</p>
+                                    </div>
+                                </a>
+                            </div>-->
+                        </div>
+                    </div>
+                    <div class="curr_paihang"><!--付费课程排行-->
+                        <div class="title"> <!--付费课程排行title-->
+                            <div class="layui-inline">
+                                <img src="../static/img/付费榜.png" >
+                            </div>
+                            <div class="layui-inline">
+                                <p class="mode_title">付费课程排行</p>
+                            </div>
+                        </div>
+                        <!--付费课程排行card-->
+                        <div class="content">
+                            @var nofreeCurrNo = 1;
+                            @for(curr in session.homePageNoFreeCurr_rank){
+                            <div class="teac_card">
+                                <div class="layui-inline curr_No">
+                                    @if(nofreeCurrNo <= 3){
+                                    <span class="layui-badge layui-bg-blue"> ${nofreeCurrNo}</span>
+                                    @}else{
+                                    <span class="layui-badge-rim">
+                                              ${nofreeCurrNo}
+                                          </span>
+                                    @}
+
+
+                                </div>
+                                <a class="layui-inline" href="/page/home_enrollCurr?curr_id=${curr.id}" title="${curr.c_name}">
+                                    @if(nofreeCurrNo == 1){
+                                    <div class="layui-inline">
+                                        @if(curr.cover_url != null && curr.cover_url != ""){
+                                        <img src="/resources${curr.cover_url}" class="curr_paihang_img">
+                                        @}else{
+                                        <img src="/resources/purikura/purikura.png" class="curr_paihang_img">
+                                        @}
+                                    </div>
+                                    <div class="layui-inline" >
+                                        <div class="curr_No1" >
+                                            ${curr.c_name}
+                                        </div>
+                                        <p class="paihang_tab">热度得分:
+                                            @if(curr.popularity == null || curr.popularity == ""){
+                                            0
+                                            @}else{
+                                            ${curr.popularity}
+                                            @}
+                                        </p>
+                                    </div>
+
+                                    @}else{
+                                    <div class="layui-inline curr_NoOther">
+                                        ${curr.c_name}
+                                    </div>
+                                    @}
+
+
+                                </a>
+                            </div>
+                            @nofreeCurrNo++;
+                            @}
+
+                            <!--   <div class="teac_card">
+                                   <div class="layui-inline"><span class="layui-badge-rim">
+                                       1
+                                   </span></div>
+                                   <a>
+                                       <div class="layui-inline">
+                                            <img src="/resources/purikura/6ca54936-ca4e-4d92-8ec4-bbb392710d2b_342803aae2e74ca38853d129c9c8f074!400x400.jpeg" class="layui-circle">
+                                        </div>
+                                        <div class="layui-inline">
+                                              老师老师
+                                        </div>
+                                   </a>
+                               </div>-->
+
+                        </div>
+                    </div>
+                </div>
+
+
+            </div>
+        </div>
+    </div>
+
+    <div class="layui-footer">
+        <!-- 底部固定区域 -->
+        © qiyoushuai.com - 底部固定区域
+    </div>
+</div>
+<script>
+    //JavaScript代码区域
+    layui.use(['element','layer','carousel','util'], function(){
+        var element = layui.element,
+        layer = layui.layer,
+        $ = layui.jquery,
+            carousel = layui.carousel,
+            util = layui.util;
+        //三个模块的 ”换一换“
+        $("#course_1_refresh").click(function () {
+            $(".course_1").load(location.href + " .course_1");
+        });
+        $("#course_2_refresh").click(function () {
+            $(".course_2").load(location.href + " .course_2");
+        });
+        $("#course_3_refresh").click(function () {
+            $(".course_3").load(location.href + " .course_3");
+        });
+
+
+
+
+
+        //从数据库获取轮播图列表并插入dom元素
+        $.ajax({
+            type:'post',
+            url:'/curr/getCarouselList',
+            success:function (data) {
+                var carousel = $(".carouselList");
+                var html = "";
+                carousel.empty();
+                for(var i=0;i<data.count;i++){
+                    var carouselCard = "<div>\n" +
+                        "                                <a href=\""+data.data[i].url+"\">\n" +
+                        "                                    <img class=\"carouse\" src=\""+data.data[i].img_url+"\">\n" +
+                        "                                    <div class=\"massage\">\n" +
+                        "                                        <div class=\"massage_1\">\n" +
+                        "                                            <p title=\""+data.data[i].title+"\" class=\"title\">"+data.data[i].title+"</p>\n" +
+                        "                                            <p class=\"content\">\n" +
+                        "                                                "+data.data[i].message+"\n" +
+                        "                                            </p>\n" +
+                        "                                        </div>\n" +
+                        "                                    </div>\n" +
+                        "                                </a>\n" +
+                        "                            </div>";
+                    html+=carouselCard;
+                }
+                carousel.append(html);
+                carouselA.reload();
+            },
+            error:function () {
+                layer.msg("系统错误",{icon:2})
+            }
+        });
+
+
+
+
+
+        //执行
+        util.fixbar({
+            bar1: false
+            ,click: function(type){
+                console.log(type);
+                if(type === 'bar1'){
+                    alert('点击了bar1')
+                }
+            }
+        });
+
+
+//建造实例
+       var carouselA= carousel.render({
+            elem: '#test1'
+            ,width: '100%' //设置容器宽度
+            ,height: '290px'
+            ,arrow: 'hover' //悬停显示箭头
+            ,interval: 3000
+
+            //,anim: 'updown' //切换动画方式
+        });
+
+        var active ={
+            login_add:function(){
+                //自定页
+            layer.open({
+                title: false,
+                type: 1,
+                skin: 'layui-layer-demo', //样式类名
+                area: ['450px', '480px'],
+                closeBtn: 1, //不显示关闭按钮
+                fixed: true,
+                move: false,
+                anim: 2,
+                shadeClose: true, //开启遮罩关闭
+                content: '<iframe frameborder="no" style="height: 470px;width: 100%;" scrolling="auto" src="/page/login_add">'
+            });
+        }
+
+        };
+
+        $('#login_add').on('click', function(){
+            var othis = $(this), method = othis.data('method');
+            active[method] ? active[method].call(this, othis) : '';
+        });
+
+
+
+        /*=======================================================*/
+        //控制三级菜单的显示与隐藏
+        var none;
+        $(".nav-lv3").hover(function () {
+            clearTimeout(none);
+            $(this).css("display","block");
+        },function () {
+            clearTimeout(none);
+            $(this).css("display","none");
+        });
+        $(".layui-nav-child dd").hover(function () {
+            clearTimeout(none);
+            $(this).siblings().find(".nav-lv3").css("display","none");
+            $(this).find('.nav-lv3').css("display","block");
+        },function () {
+            var $this = $(this);
+            none = setTimeout(function (){$this.find(".nav-lv3").css("display","none")},300)
+        });
+        /*============================================================*/
+
+    });
+</script>
+</body>
+
+<!--<body>
+<form action="/upload" method="post" enctype="multipart/form-data">
+    用户名：<input type="text" name="username"><br>
+    密码：<input type="text" name="pswd"><br>
+    文件名：<input type="file" name="file"><br>
+    <input type="submit" value="上传">
+</form>
+
+
+
+</body>-->
+</html>

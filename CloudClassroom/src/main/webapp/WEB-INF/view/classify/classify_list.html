@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="../static/layui/layui.js"></script>
+    <link rel="stylesheet" href="../static/layui/css/layui.css">
+    <style>
+        .layui-layout-right{
+            top: 10px !important;
+        }
+        .layui-input{
+            height: 30px;
+        }
+        .record_title{
+            position: relative;
+            top: 5px;
+        }
+        .layui-layout-right{
+            right: 20px !important;
+        }
+    </style>
+</head>
+<body>
+<div style="position:absolute;width: 260px; height:100%; ">
+    <div id="test9" class="demo-tree demo-tree-box" style="width: 260px; height: 100%; overflow-y: scroll;"></div>
+</div>
+<div  style=" position: absolute;left: 21%;width: 1030px;">
+    <div style="width: 100%;height: 30px;padding: 10px" class="record_title">
+        <div class="layui-inline">
+            <div class="layui-inline">
+                <i class="layui-icon layui-icon-table" style="font-size: 26px"></i>
+            </div>
+            <div class="layui-inline">
+                <p style="font-size: 24px">课程类别修改记录</p>
+            </div>
+
+
+        </div>
+        <div class="layui-inline layui-layout-right">
+            <div class="layui-inline">
+                <input class="layui-input" type="text" width="80px" autocomplete="off" id="demoReload">
+            </div>
+            <div class="layui-inline">
+                <input id="query1" class="layui-btn layui-btn-sm" type="button" data-type="reload" value="查询">
+            </div>
+        </div>
+    </div>
+    <table id="classify_record" lay-filter="classify_record"></table>
+</div>
+
+<script type="text/html" id="toolbarDemo">
+    <div class="layui-inline" lay-event="refresh">
+        <i class="layui-icon layui-icon-refresh"></i>
+    </div>
+</script>
+
+<script type="text/html" id="typeTpl">
+    {{#  if(d.type === "增加"){ }}
+    <span class="layui-badge layui-bg-blue">{{d.type}}</span>
+    {{#  } else if(d.type === "编辑"){ }}
+    <span class="layui-badge layui-bg-green">{{d.type}}</span>
+
+    {{# } else if(d.type === "删除"){ }}
+         <span class="layui-badge">{{d.type}}</span>
+    {{# } }}
+</script>
+
+<script>
+var $;
+    layui.use(['tree', 'util','table'], function(){
+        var table = layui.table
+            ,layer = layui.layer
+            ,tree = layui.tree
+            ,util = layui.util;
+        $ = layui.jquery;
+
+
+
+        //左侧树形菜单栏  动态获取数据以及增删改操作（BUG：不想增加三级菜单但是layui插件不支持，）
+        $.ajax({
+            type: 'post',
+            url:'/curr/classifyList_new',
+            success:function (data) {
+                var superid = null;
+
+                //开启节点操作图标
+                tree.render({
+                    id: 'classify_tree'
+                    ,elem: '#test9'
+                    ,data: data
+                    ,onlyIconControl: true  //是否仅允许节点左侧图标控制展开收缩
+                    ,edit: ['add', 'update', 'del'] //操作节点的图标
+                    ,operate: function(obj){
+                        var type = obj.type; //得到操作类型：add、edit、del
+                        var data = obj.data; //得到当前节点的数据
+                        var elem = obj.elem; //得到当前节点元素
+                        //Ajax 操作
+                        var id = data.id; //得到节点索引
+                        if(type === 'add'){ //增加节点
+                            superid = null;
+                            superid = id;
+                            if(data.field == 1001 ||  id == 1001){}else {
+                                parent.layer.msg("错误，只可添加二级类别",{icon:2});
+                                //可以重载所有基础参数
+                                tree.reload('classify_tree');
+                            }
+
+                        } else if(type === 'update'){ //修改节点
+                            var title = elem.find('.layui-tree-txt').html(); //得到修改后的内容
+
+                            $.ajax({
+                                type:'post',
+                                url:'/curr/classify_edit',
+                                data:{
+                                    superid:superid,
+                                    title_new:title,
+                                    add_userid:"${session.user_id}",
+                                    id:id
+
+                                },
+                                success:function (data) {
+                                    superid = null;
+                                    location.reload();
+                                    if(data == "null"){}else {
+                                        parent.layer.msg(data);
+                                    }
+
+                                },
+                                error:function (data) {
+                                    parent.layer.msg("服务器错误",{icon:2});
+                                }
+                            })
+                        } else if(type === 'del'){ //删除节点
+                            if(id == null){}else if(id === 1001){
+                                parent.layer.msg("此类别不可删除",{icon:2});
+                                location.reload();
+                            }else {
+                                $.ajax({
+                                    type:'post',
+                                    url:'/curr/classify_del',
+                                    data:{
+                                        id:id,
+                                        del_userid:"${session.user_id}",
+                                        title: data.title
+                                    },
+                                    success:function (data) {
+                                        if(data == "删除成功"){
+                                            layer.msg(data,{icon:1})
+                                            location.reload();
+                                        }else {
+                                            layer.msg(data,{icon:2})
+                                        }
+                                    },
+                                    error:function (data) {
+                                        layer.msg("服务器错误",{icon:2})
+                                    }
+                                })
+                            }
+
+                        }
+                    }
+
+                });
+            },
+            error:function () {
+                parent.layer.msg("服务器错误",{icon:2});
+            }
+        });
+
+
+
+        //第一个实例
+        table.render({
+             id: 'classify_record'
+            ,elem: '#classify_record'
+            ,height: 480
+            ,url: '/curr/classify_record_list' //数据接口
+            ,toolbar: '#toolbarDemo' //开启头部工具栏，并为其绑定左侧模板
+            ,defaultToolbar: ['filter', 'exports', 'print']
+            ,page: true //开启分页
+            ,limit:9
+            ,limits:[9,18,27,36]
+            ,cols: [[ //表头
+                {field: 'id', title: 'ID', width:80, sort: true, fixed: 'left'}
+                ,{field: 'classify_id', title: '课程类别ID', sort: true, width:120,  style:'cursor: pointer;'}
+                ,{field: 'name_new', title: '名称', width: 211}
+                ,{field: 'name_old', title: '名称（旧）', width: 211}
+                ,{field: 'type', title: '操作', sort: true, width: 91,templet: '#typeTpl'}
+                ,{field: 'edit_userid', title: '操作用户ID', sort: true, width: 100}
+                ,{field: 'edit_date', title: '操作日期', sort: true, width: 209}
+            ]]
+
+        });
+
+
+
+
+
+        var  active = {
+            reload: function(){
+                var demoReload = $('#demoReload');
+                //执行重载
+                table.reload('classify_record', {
+                    url: '/curr/query_classify_record'
+                    ,limit:9
+                    ,limits:[9,18,27,36]
+                    ,page: {
+                        curr: 1 //重新从第 1 页开始
+                    }
+                    ,where: {
+
+                            text: demoReload.val()
+
+                    }
+                }, 'data');
+            }
+        };
+
+        $('#query1').on('click', function(){
+            var type = $(this).data('type');
+            active[type] ? active[type].call(this) : '';
+        });
+
+
+
+        //监听头部工具栏  如果event为refreshi则重新加载表格
+        table.on('toolbar(classify_record)', function(obj){
+            var checkStatus = table.checkStatus(obj.config.id);
+            if(obj.event === 'refresh'){
+                //执行重载
+                table.reload('classify_record', {
+                    url: '/curr/classify_record_list'
+                    ,limit:9
+                    ,limits:[9,18,27,36]
+                    ,page: {
+                        curr: 1 //重新从第 1 页开始
+                    }
+                }, 'data');
+            }
+        });
+
+
+    });
+</script>
+
+<script type="text/html" id="barDemo">
+    <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+</script>
+</body>
+</body>
+</html>

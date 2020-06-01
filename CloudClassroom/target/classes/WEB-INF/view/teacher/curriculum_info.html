@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>课程详细信息</title>
+    <script src="../static/layui/layui.js"></script>
+    <script src="../../../static/js/echarts.min.js"></script>
+    <link rel="stylesheet" href="../static/layui/css/layui.css">
+</head>
+<style>
+    .layui-table tbody tr:hover{
+        background-color: transparent;
+    }
+
+    .layui-elem-quote {
+        position: relative;
+        left: 30px;
+        font-size: 18px;
+        font-family: auto;
+    }
+    .tool{
+        position: absolute;
+        left: 100px;
+        top: 7.4px;
+    }
+    .form{
+        position: relative;
+        left: -20px;
+    }
+    .open_class{
+        position: absolute;
+        left: 1030px;
+        top: 30px;
+    }
+    .chapter {
+        position: absolute;
+        left: 950px;
+        top: 20px;
+    }
+
+
+
+    #curr_cover .layui-form-label {
+        width: 90px !important;
+    }
+    .cover{
+        width: 450px;
+        margin-left: 40px;
+        height: 200px;
+    }
+    .cover1{
+        width: 450px;
+        margin-left: 40px;
+        height: 200px;
+        line-height: 40px;
+        background-color: white;
+        box-shadow: 1px 1px 5px 1px;
+    }
+    .chart{
+        height: 300px;
+        width: 500px;
+        margin-left: 40px;
+        background-color: white;
+    }
+    .layui-table img{
+        max-width: 450px !important;
+    }
+    .layui-upload-drag{
+        padding: 0 !important;
+    }
+    .zanwufengmian{
+        position: relative;
+        top: 50px;
+    }
+
+</style>
+<body>
+
+<div>
+    <form class="layui-form layui-form-pane form" action="">
+        <table class="layui-table " lay-skin="nob" >
+            <tr>
+                <td colspan="6">
+                    <blockquote class="layui-elem-quote">${session.curriculum.c_name}</blockquote>
+                    <button name="chapter" class="layui-btn layui-btn-sm layui-btn-normal chapter">编辑课程章节</button>
+                </td>
+
+
+
+
+            <tr>
+            <tr>
+                <td width="10%">
+                    <p align="right" style="font-size: 14px">申请编号</p>
+                </td>
+                <td  width="20%"><input type="text" name="id" disabled class="layui-input" value='${session.curriculum.id}' disabled></td>
+                <td  width="10%">
+
+                    <p align="right"  style="font-size: 14px">教师ID</p>
+                </td>
+                <td width="20%">
+
+                    <input type="text" name="tea_id" autocomplete="off" value="${session.curriculum.tea_id}" class="layui-input" disabled>
+                </td>
+                <td  width="10%">
+
+
+                </td>
+                <td width="20%">
+
+
+                </td>
+            </tr>
+            <tr>
+                <td  width="10%">
+
+                    <p align="right"  style="font-size: 14px">教师姓名</p>
+                </td>
+                <td width="20%">
+
+                    <input type="text" name="tea_relname" autocomplete="off" value="${session.curriculum.tea_relname}" class="layui-input" disabled>
+                </td>
+                <td  width="10%">
+
+                    <p align="right"  style="font-size: 14px">分类(主)</p>
+                </td>
+                <td width="20%">
+                    <input type="text" name="classify" autocomplete="off" value="${session.curriculum.classify}" class="layui-input" disabled>
+                </td>
+                <td  width="10%">
+
+                    <p align="right"  style="font-size: 14px">详细分类</p>
+                </td>
+                <td width="20%">
+
+                    <input type="text" name="classify_child" autocomplete="off" value="${session.curriculum.classify_child}" class="layui-input" disabled>
+                </td>
+            </tr>
+            <tr>
+                <td  width="10%">
+
+                    <p align="right"  style="font-size: 14px">是否收费</p>
+                </td>
+                <td width="20%">
+                    @if(session.curriculum.charge == 1 ){
+                    <input type="text" name="charge" autocomplete="off" value="收费" class="layui-input" disabled>
+                    @}else{
+                    <input type="text" name="charge" autocomplete="off" value="免费" class="layui-input" disabled>
+                    @}
+                </td>
+                <td  width="10%">
+
+                    <p align="right"  style="font-size: 14px">价格</p>
+                </td>
+                <td colspan="3">
+                    @if(session.curriculum.price == null ){
+                    <input type="text" name="userid" autocomplete="off" value="0" class="layui-input" disabled>
+                    @}else{
+                    <input type="text" name="charge" autocomplete="off" value="${session.curriculum.price}" class="layui-input" disabled>
+                    @}
+
+                </td>
+            </tr>
+            <tr>
+                <td  width="10%">
+
+                    <p align="right"  style="font-size: 14px">申请日期</p>
+                </td>
+                <td width="20%">
+
+                    <input type="text" name="add_date" autocomplete="off" value="${session.curriculum.add_date}" class="layui-input" disabled>
+                </td>
+                <td  width="10%">
+                    <p align="right"  style="font-size: 14px"><i class="layui-icon layui-icon-fire" style="color: red"></i> 热度</p>
+
+                </td>
+                <td width="20%">
+                    @if(session.curriculum.price == null ){
+                    <input type="text" name="userid" autocomplete="off" value="0" class="layui-input" disabled>
+                    @}else{
+                    <input type="text" name="popularity" autocomplete="off" value="${session.curriculum.popularity}" class="layui-input" disabled>
+                    @}
+
+                </td>
+                <td  width="10%">
+
+                </td>
+                <td width="20%">
+
+                </td>
+            </tr>
+
+            <tr>
+                <td width="10%">
+                    <p align="right"  style="font-size: 14px">课程简介</p>
+                </td>
+                <td colspan="5">
+                    <textarea  class="layui-textarea" style="width: 400px;height: 100px" disabled>${session.curriculum.c_describe}</textarea>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="3">
+                    <div class="layui-upload-drag" id="updateCover">
+                        @if(session.curriculum.cover_url!=null){
+                             <img src="/resources${session.curriculum.cover_url}" class="cover">
+                        @}else{
+                            <div class="cover1">
+                                <div class="zanwufengmian">
+                                    <i class="layui-icon layui-icon-face-surprised" style="font-size: 60px;color: #999999"></i><br>
+                                    暂无封面
+                                </div>
+
+                            </div>
+                        @}
+
+                    </div>
+
+                </td>
+                <td colspan="3">
+                    <div id="container" class="chart "></div>
+                </td>
+
+            </tr>
+        </table>
+
+    </form>
+    <hr>
+<!--    <div style="width: 100%;height: 40px;background: #e6e6e6">
+
+    </div>-->
+<div class="open_class">
+    @if(session.curriculum.state == 4){
+         <button name="closeClass" class="layui-btn layui-btn-sm layui-btn-danger  curr_state_btn">停课</button>
+    @}else{
+        <button name="openClass" class="layui-btn layui-btn-sm  curr_state_btn">开课</button>
+    @}
+
+
+</div>
+</div>
+<script>
+    var $;
+    layui.use(['form','layer','table','upload'], function() {
+        var layer = layui.layer
+            , table = layui.table
+            ,upload = layui.upload;
+        $ = layui.jquery;
+
+            var currculumId = "${session.curriculum.id}";
+
+        //拖拽上传
+        upload.render({
+            elem: '#updateCover'
+            ,url: '/repository/cover_upload' //改成您自己的上传接口
+            ,accept: 'images' //
+            ,done: function(res){
+                var  cover_url = res.data.res;
+                var cover_url_substring =cover_url.substring(cover_url.lastIndexOf("\\",cover_url.lastIndexOf("\\")-1));
+                var cover_url_finaly="/resources"+cover_url_substring.replace("\\","/");
+                //图片上传成功后 开课
+                $.ajax({
+                    type: 'post',
+                    url: '/teac/updateCover',
+                    data: {
+                        curr_id:currculumId,
+                        cover_url:cover_url
+                    },
+                    success: function (data) {
+                        layer.msg(data);
+                        $("#updateCover").empty();
+                        $("#updateCover").append("<img src=\"\" class=\"cover\">");
+                        $(".cover").attr("src",cover_url_finaly);
+
+                    },
+                    error: function (data) {
+                        layer.msg('服务器错误');
+                    }
+                });
+
+            }
+            ,error: function(){
+                layer.msg('上传服务器错误');
+            }
+        });
+
+
+
+
+
+
+        $(".chapter").click(function () {
+            var curr_id = $("[name=id]").val();
+            var cla_nm = "${session.curriculum.c_name}";
+            window.parent.location.href = "/page/class_chapter?curr_id=" + curr_id + "&cla_nm=" + cla_nm;
+
+        });
+
+
+
+
+
+        $(".curr_state_btn").click(function () {
+            var state = $(this).prop("name");
+
+            if (state == "openClass") {
+                parent.parent.layer.confirm("您确认要开课吗，请确保您的课程视频完善",function () {
+                    var ChapterUrlIsNulllCount = "${session.ChapterUrlIsNulllCount}";
+                    var chapterSize = "${session.chapterSize}";
+                    if(ChapterUrlIsNulllCount >0){
+                        parent.parent.layer.alert("您还有课程章节视频没有上传，请进入课程章节编辑页面进行上传",{title:"开课失败",closeBtn:0,icon:5});
+                        return;
+                    }
+                    if(chapterSize <= 0){
+                        parent.parent.layer.alert("此课程中未上传任何教学视频，请进入课程章节编辑页面进行上传",{title:"开课失败",closeBtn:0,icon:5});
+                        return;
+                    }
+                    if ("${session.curriculum.cover_url}" == null || "${session.curriculum.cover_url}" == "") {
+
+                        parent.parent.layer.open({
+                            title: ["请上传课程封面"],
+                            type: 1,
+                            skin: 'layui-layer-demo', //样式类名
+                            area: ['450px', '200px'],
+                            closeBtn: 1, //不显示关闭按钮
+                            fixed: true,
+                            move: false,
+                            anim: 2,
+                            shadeClose: true, //开启遮罩关闭
+                            content: $("#curr_cover").html(),
+                            end:function () {
+                                location.reload();
+                            }
+                        });
+                    } else {
+                        $.ajax({
+                            type: 'post',
+                            url: '/teac/openAndCloseCurr',
+                            data: {
+                                curr_id:"${session.curriculum.id}",
+                                state:4
+                            },
+                            success: function (data) {
+                                parent.parent.layer.msg(data);
+                                location.reload();
+                               window.parent.refresh();
+                               /* parent.$(".side_refresh").load("http://localhost:8080/page/my_courses_offered .side_refresh");*/
+                            },
+                            error: function (data) {
+                                parent.parent.layer.msg('服务器错误');
+                            }
+                        });
+                    }
+                });
+
+            }else {
+                parent.parent.layer.confirm("您确认要停课吗",function () {
+                    $.ajax({
+                        type: 'post',
+                        url: '/teac/openAndCloseCurr',
+                        data: {
+                            curr_id:"${session.curriculum.id}",
+                            state:5
+                        },
+                        success: function (data) {
+                            parent.parent.layer.msg(data);
+                            location.reload();
+                            window.parent.refresh();
+                           /* parent.$(".side_refresh").load(parent.document.URL+" .side_refresh");*/
+                        },
+                        error: function (data) {
+                            parent.parent.layer.msg('服务器错误');
+                        }
+                    });
+                });
+
+            }
+        });
+
+
+
+        //折线图
+        var dom = document.getElementById("container");
+        var myChart = echarts.init(dom);
+        var app = {};
+        option = null;
+        $.ajax({
+            type:'post',
+            url:'/curr/getPopularityRecord',
+            data:{curr_id:currculumId},
+            success:function (data) {
+                option = {
+                    grid:{
+                        left: 70,
+                        right:50,
+                    },
+                    tooltip: {
+                        trigger: 'axis'
+                    },
+                    legend: {
+                        data: ['当日热度']
+                    },
+                    xAxis: {
+                        id:1,
+                        type: 'category',
+                        data: data.dateList
+                    },
+                    yAxis:[
+                        {
+                            name:'热度',
+                            position:'left',
+                            type: 'value'
+                        }
+                    ] ,
+                    series: [{
+                        data: data.popuList,
+                        yAxisIndex:0,
+                        type: 'line',
+                        name:'热度'
+                        /*itemStyle:{
+                            color:"#666666"
+                        }*/
+                        /* symbol:'rect'*/
+                    }
+                    ]
+                };
+
+                if (option && typeof option === "object") {
+                    myChart.setOption(option, true);
+                }
+            },
+            error:function () {
+
+            }
+        });
+
+
+
+
+    })
+</script>
+</body>
+
+<div id="curr_cover" style="display: none">
+    <div class="layui-form-item">
+        <label class="layui-form-label">上传课程封面</label>
+        <div class="layui-input-block">
+            <button type="button" class="layui-btn" id="class_cover"><i class="layui-icon"></i>上传图片</button>
+            <input id="curr_id" type="text" value="${session.curriculum.id}" style="display: none">
+        </div>
+
+    </div>
+    <script>
+        layui.use(['form','layer','table','upload'], function() {
+            var layer = layui.layer
+                ,upload = layui.upload;
+            $ = layui.jquery;
+        var curr_id = $("#curr_id").val();
+            //课程封面的图片上传
+            upload.render({
+                elem: '#class_cover'
+                ,url: '/repository/cover_upload' //改成您自己的上传接口
+                ,accept: 'images' //
+                ,done: function(res){
+                    var  cover_url = res.data.res;
+                    //图片上传成功后 开课
+                    $.ajax({
+                        type: 'post',
+                        url: '/teac/openAndCloseCurr',
+                        data: {
+                            curr_id:curr_id,
+                            state:4,
+                            cover_url:cover_url
+                        },
+                        success: function (data) {
+                            layer.close(layer.index);
+                            layer.msg(data);
+
+                        },
+                        error: function (data) {
+                            layer.msg('服务器错误');
+                        }
+                    });
+
+                }
+                ,error: function(){
+                    layer.msg('上传服务器错误');
+                }
+            });
+
+        })
+    </script>
+</div>
+</html>

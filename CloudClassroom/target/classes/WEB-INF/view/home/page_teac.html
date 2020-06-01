@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html style="height: 100%">
+<head>
+    <meta charset="utf-8">
+    <title>教师后台首页</title>
+    <script src="../../../static/layui/layui.js"></script>
+    <script src="../../../static/js/echarts.min.js"></script>
+    <link rel="stylesheet" href="../../../static/layui/css/layui.css">
+
+    <style>
+        /*html{
+            background-color: #fbfbfb;
+        }*/
+        .chart{
+            height: 300px;
+            width: 500px;
+            background-color: white;
+        }
+        .card{
+            -webkit-box-shadow: 0 0 20px rgba(0,0,0,.08);
+            box-shadow: 0 0 20px rgba(0,0,0,.08);
+            border-radius: 5px;
+            margin: 8px;
+        }
+        .card .series_header{
+            position: relative;
+            height: 42px;
+            line-height: 42px;
+            padding: 0 15px;
+            border-bottom: 1px solid #f6f6f6;
+            color: #333;
+            border-radius: 2px 2px 0 0;
+            font-size: 14px;
+        }
+        .card .series_title{
+            color: #212529;
+            font-size: 16px;
+            padding-bottom: 20px;
+            font-weight: bolder;
+        }
+        .series{
+            width: 500px;
+        }
+        .data_card{
+            height: 100px;
+            width: 310px;
+        }
+        .message{
+            height: 343px;
+            width: 780px;
+        }
+        .data_card img{
+            height: 45px;
+            width: 45px;
+            margin-right: 40px;
+        }
+        .content{
+            margin: 20px;
+        }
+        .content .value{
+            color: #455a64;
+            font-size: 24px;
+            padding-bottom: 5px;
+        }
+        .content .title{
+            color: #99abb4;
+        }
+        .message_btn{
+            position: relative;
+            left: 460px;
+        }
+        .refresh_div{
+            float: right;
+        }
+
+        .refresh_div button{
+            width: 22px;
+            height: 22px;
+            padding: 0 !important;
+        }
+        .refresh_div button i{
+           margin-right: 0 !important;
+        }
+
+    </style>
+</head>
+<body style="height: 100%; margin: 0">
+<!-- 为ECharts准备一个具备大小（宽高）的Dom -->
+<div class="data">
+    <div class="layui-inline data_card card">
+        <div class="content">
+            <img class="layui-inline" src="../static/img/今日收入.png">
+            <div class="layui-inline">
+                <p id="earning_today" class="value">/</p>
+                <p class="title">今日收入</p>
+            </div>
+        </div>
+
+    </div>
+    <div class="layui-inline data_card card">
+        <div class="content">
+            <img class="layui-inline" src="../static/img/总收入.png">
+            <div class="layui-inline">
+                <p id="earning_all" class="value">/</p>
+                <p class="title">总收入</p>
+            </div>
+        </div>
+
+    </div>
+    <div class="layui-inline data_card card">
+        <div class="content">
+            <img class="layui-inline" src="../static/img/今日热度.png">
+            <div class="layui-inline">
+                <p id="popu_today" class="value">/</p>
+                <p class="title">今日热度</p>
+            </div>
+        </div>
+
+    </div>
+    <div class="layui-inline data_card card">
+        <div class="content">
+            <img class="layui-inline" src="../static/img/总热度.png">
+            <div class="layui-inline">
+                <p id="popu_all" class="value">/</p>
+                <p class="title">总热度</p>
+            </div>
+        </div>
+
+    </div>
+</div>
+<div class="card series layui-inline">
+    <div class="series_header">
+        <div class="series_title">
+            七日内收入/热度趋势
+        </div>
+    </div>
+    <div id="container" class="chart "></div>
+</div>
+<div class="card layui-inline message">
+    <div class="series_header">
+        <div class="series_title">
+            我的消息
+            <button class="layui-btn layui-btn-xs layui-btn-primary btn_toll" data-type="sendMsg">写信息</button>
+            <div class="layui-btn-group message_btn layui-inline">
+                <button class="layui-btn layui-btn-xs layui-btn-primary btn_toll" data-type="markAsRead">标记为已读</button>
+                <button class="layui-btn layui-btn-xs layui-btn-primary btn_toll" data-type="delete">批量删除</button>
+            </div>
+            <div class="layui-inline refresh_div">
+                <button class="layui-btn layui-btn-primary layui-btn-xs refresh">
+                    <i class="layui-icon layui-icon-refresh"></i>
+                </button>
+
+            </div>
+        </div>
+    </div>
+    <div class="message_list">
+        <table class="layui-hide" id="message" lay-filter="message"></table>
+    </div>
+</div>
+
+<script type="text/html" id="sendtypeTpl">
+    {{#  if(d.send_type === 1){ }}
+    <span class="layui-badge layui-bg-blue">管理员</span>
+    {{#  } else if(d.send_type === 2){ }}
+    {{ d.send_name }}(教师)
+
+    {{# } else { }}
+    {{ d.send_name }}(用户)
+    {{# } }}
+</script>
+
+<script type="text/javascript">
+    layui.use(['table','layer','element'], function(){
+        var table = layui.table,
+            layer=layui.layer,
+        $ = layui.jquery;
+
+
+
+        var allData = function(){
+          $.ajax({
+              type:'post',
+              url:'/teac/getPricePopuData',
+              success:function (data) {
+                  if(data!=null){
+                      $("#earning_today").text(data.earnings.earnings_today_format);
+                      $("#earning_all").text(data.earnings.total_revenue_format);
+                      $("#popu_today").text(data.popu_today);
+                      $("#popu_all").text(data.popu_all);
+                  }
+
+              },
+              error:function () {
+
+              }
+          })
+        };
+
+        allData();
+
+        table.render({
+            elem: '#message'
+            ,id:'message'
+            ,url:'/user/getNotice'
+            ,height: 275
+            ,cols: [[
+                {type: 'checkbox', fixed: 'left'}
+                ,{field:'title', title:'标题', width:312,event: 'seeMsg', style:'cursor: pointer;'}
+                ,{field:'send_name', title:'发送人', width:110,templet: '#sendtypeTpl'}
+                ,{field:'send_date', title:'发送时间', width:161,  sort: true}
+                ,{field:'type', title:'状态', width:76, sort: true,templet:'#type'}
+                ,{fixed: 'right', title:'操作', toolbar: '#barDemo', width:65}
+            ]]
+            ,page: true
+            ,limit:5
+            ,limits:[5,10,15,20]
+            ,done:function (res,curr) {
+                if(curr>1 && res.data.length<=0){
+                    table.reload("message",{
+                        page:{curr:curr-1},
+                        data:table.data
+
+                    })
+                }
+            }
+        });
+
+
+
+
+        //监听单元格单击
+        table.on("tool(message)",function (obj) {
+           var data = obj.data;
+            var tr = obj.tr; //获得当前行 tr 的 DOM 对象（如果有的话）
+           if(obj.event === "seeMsg"){
+               parent.layer.open({
+                   title:"阅读信息",
+                   type:1,
+                   closeBtn:1,
+                   fixed:true,
+                   move:false,
+                   area: ['650px', '500px'],
+                   shadeClose:true,
+                   content:'<iframe frameborder="no" name="readNotice" style="height:453px;width:650px;" scrolling="auto">',
+                   success:function (layero,index) {
+                       parent.frames["readNotice"].location = "/page/readNotice?notice_id="+data.id+"&type="+data.type;
+                       if(data.type ===1){
+                           setTimeout(function reloadTable() {
+                               table.reload("message")
+                           },500);
+                       }
+
+                   }
+               })
+           }else  if(obj.event === 'del'){ //删除
+               parent.layer.confirm('确定删除此消息吗', function(index){
+                   obj.del(); //删除对应行（tr）的DOM结构，并更新缓存
+                   parent.layer.close(parent.layer.index);
+                   //向服务端发送删除指令
+                   var notice_id = [];
+                   notice_id.push(data.id);
+                   $.ajax({
+                       type:'post',
+                       url:'/user/deleteNotice',
+                       data:{
+                           notices_id:notice_id
+                       },
+                       success:function (data) {
+                           parent.layer.msg(data);
+                           table.reload("message");
+                       },
+                       error:function () {
+                           parent.layer.msg("系统错误");
+                       }
+                   })
+               });
+           }
+        });
+
+      //刷新表格
+      $(".refresh_div").click(function () {
+          table.reload("message");
+      });
+
+/*
+        //监听工具条
+        table.on('tool(message)', function(obj){ //注：tool 是工具条事件名，test 是 table 原始容器的属性 lay-filter="对应的值"
+            var data = obj.data; //获得当前行数据
+            var layEvent = obj.event; //获得 lay-event 对应的值（也可以是表头的 event 参数对应的值）
+            var tr = obj.tr; //获得当前行 tr 的 DOM 对象（如果有的话）
+
+
+        });*/
+
+        var active = {
+            markAsRead: function(){ //批量已读
+                var checkStatus = table.checkStatus('message')
+                    ,data = checkStatus.data
+                    ,num = data.length;
+                if(num <= 0){
+                    parent.layer.msg("请选择信息");
+                    return;
+                }
+              var notice_id =[];
+                for(var i=0;i<data.length;i++){
+                    notice_id.push(data[i].id);
+                }
+               $.ajax({
+                   type:'post',
+                   url:'/user/markNoticeAsRead',
+                   data:{
+                       notices_id:notice_id
+                   },
+                   success:function (data) {
+                        parent.layer.msg(data);
+                       table.reload("message");
+                   },
+                   error:function () {
+                       parent.layer.msg("系统错误");
+                   }
+
+               })
+            }
+            ,delete: function(){ //批量删除
+                var checkStatus = table.checkStatus('message')
+                    ,data = checkStatus.data
+                    ,num = data.length;
+                if(num <= 0){
+                    parent.layer.msg("请选择信息");
+                    return;
+                }
+                var notice_id =[];
+                for(var i=0;i<data.length;i++){
+                    notice_id.push(data[i].id);
+                }
+                $.ajax({
+                    type:'post',
+                    url:'/user/deleteNotice',
+                    data:{
+                        notices_id:notice_id
+                    },
+                    success:function (data) {
+                        parent.layer.msg(data);
+                        table.reload("message");
+                    },
+                    error:function () {
+                        parent.layer.msg("系统错误");
+                    }
+
+                })
+            }
+            ,sendMsg:function () {
+                parent.layer.open({
+                    title:"发送信息",
+                    type:1,
+                    closeBtn:1,
+                    fixed:true,
+                    move:false,
+                    area: ['650px', '500px'],
+                    shadeClose:true,
+                    content:'<iframe frameborder="no" name="readNotice" style="height:453px;width:650px;" scrolling="auto">',
+                    success:function (layero,index) {
+                        parent.frames["readNotice"].location = "/page/sendNotice";
+
+                    }
+                })
+            }
+        };
+
+        $('.btn_toll').on('click', function(){
+            var type = $(this).data('type');
+            active[type] ? active[type].call(this) : '';
+        });
+
+
+
+        //折线图
+        var dom = document.getElementById("container");
+        var myChart = echarts.init(dom);
+        var app = {};
+        option = null;
+        $.ajax({
+            type:'post',
+            url:'/teac/getEarnAndCurrRecord',
+            data:{curr_id:null},
+            success:function (data) {
+                option = {
+                    grid:{
+                        left: 70,
+                        right:50,
+                    },
+                    tooltip: {
+                        trigger: 'axis'
+                    },
+                    legend: {
+                        data: ['当日收入', '当日热度']
+                    },
+                    xAxis: {
+                        id:1,
+                        type: 'category',
+                        data: data.date
+                    },
+                    yAxis:[
+                        {
+                            id:1,
+                            name:'收入',
+                            position:'left',
+                            type: 'value'
+                        }  ,
+                        {
+                            id:2,
+                            name:'热度',
+                            position:'right',
+                            type: 'value'
+                        }
+                    ] ,
+                    series: [{
+                        data: data.earning,
+                        yAxisIndex:0,
+                        type: 'line',
+                        name:'收入'
+                        /*itemStyle:{
+                            color:"#666666"
+                        }*/
+                        /* symbol:'rect'*/
+                    },
+                        {
+                            data:data.populary,
+                            yAxisIndex:1,
+                            type: 'line',
+                            name:'热度'
+
+                        }
+                    ]
+                };
+
+                if (option && typeof option === "object") {
+                    myChart.setOption(option, true);
+                }
+            },
+            error:function () {
+
+            }
+        });
+
+
+
+    });
+
+
+</script>
+
+<script type="text/html" id="barDemo">
+    <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+</script>
+<script type="text/html" id="type">
+    {{# if(d.type == 1){ }}
+    <span class="layui-badge layui-bg-blue">未读</span>
+    {{# }else if(d.type ==2){ }}
+    <span class="layui-badge layui-bg-green">已读</span>
+    {{# } }}
+</script>
+
+</body>
+</html>
